@@ -11,13 +11,22 @@
 <section class="section">
   <div class="container">
     <h1 class="title has-text-centered">Formulario Escolar</h1>
-    <form class="box">
+
+    <!-- Mensaje de éxito -->
+    @if(session('success'))
+      <div class="notification is-success">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    <form class="box" method="POST" action="{{ route('formulario.store') }}">
+      @csrf
 
       <!-- Correo -->
       <div class="field">
         <label class="label">Correo</label>
         <div class="control">
-          <input class="input" type="email" placeholder="ejemplo@correo.com" required>
+          <input class="input" type="email" name="correo" placeholder="ejemplo@correo.com" required>
         </div>
       </div>
 
@@ -25,7 +34,7 @@
       <div class="field">
         <label class="label">Nombre completo</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Tu nombre completo" required>
+          <input class="input" type="text" name="nombre" placeholder="Tu nombre completo" required>
         </div>
       </div>
 
@@ -34,9 +43,9 @@
         <label class="label">Sexo</label>
         <div class="control">
           <div class="select is-fullwidth">
-            <select>
-              <option>Masculino</option>
-              <option>Femenino</option>
+            <select name="sexo" required>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
             </select>
           </div>
         </div>
@@ -45,7 +54,7 @@
       <!-- Edad -->
       <div class="field">
         <label class="label">Edad</label>
-        <input class="slider is-fullwidth is-info" type="range" min="15" max="60" value="20" id="edad">
+        <input class="slider is-fullwidth is-info" type="range" min="15" max="60" value="20" id="edad" name="edad">
         <p id="edadValue" class="has-text-weight-semibold">20 años</p>
       </div>
 
@@ -54,7 +63,7 @@
         <label class="label">Carrera</label>
         <div class="control">
           <div class="select is-fullwidth">
-            <select>
+            <select name="carrera" required>
               <option>Ingeniería en Computación</option>
               <option>Ingeniería Química</option>
               <option>Ingeniería en Diseño</option>
@@ -70,42 +79,42 @@
       <!-- Semestre -->
       <div class="field">
         <label class="label">Semestre</label>
-        <input class="slider is-fullwidth is-link" type="range" min="1" max="10" value="1" id="semestre">
+        <input class="slider is-fullwidth is-link" type="range" min="1" max="10" value="1" id="semestre" name="semestre">
         <p id="semestreValue" class="has-text-weight-semibold">1° semestre</p>
       </div>
 
       <!-- Estatura -->
       <div class="field">
         <label class="label">Estatura (cm)</label>
-        <input class="slider is-fullwidth is-primary" type="range" min="120" max="220" value="170" id="estatura">
+        <input class="slider is-fullwidth is-primary" type="range" min="120" max="220" value="170" id="estatura" name="estatura">
         <p id="estaturaValue" class="has-text-weight-semibold">170 cm</p>
       </div>
 
       <!-- Peso -->
       <div class="field">
         <label class="label">Peso (kg)</label>
-        <input class="slider is-fullwidth is-primary" type="range" min="40" max="200" value="70" id="peso">
+        <input class="slider is-fullwidth is-primary" type="range" min="40" max="200" value="70" id="peso" name="peso">
         <p id="pesoValue" class="has-text-weight-semibold">70 kg</p>
       </div>
 
       <!-- Promedio anterior -->
       <div class="field">
         <label class="label">Promedio anterior</label>
-        <input class="slider is-fullwidth is-success" type="range" min="0" max="10" step="0.1" value="8" id="promedio">
+        <input class="slider is-fullwidth is-success" type="range" min="0" max="10" step="0.1" value="8" id="promedio" name="promedio">
         <p id="promedioValue" class="has-text-weight-semibold">8.0</p>
       </div>
 
       <!-- Tiempo de traslado -->
       <div class="field">
         <label class="label">Tiempo de traslado (min)</label>
-        <input class="slider is-fullwidth is-warning" type="range" min="0" max="180" step="5" value="30" id="traslado">
+        <input class="slider is-fullwidth is-warning" type="range" min="0" max="180" step="5" value="30" id="traslado" name="traslado">
         <p id="trasladoValue" class="has-text-weight-semibold">30 min</p>
       </div>
 
       <!-- Gasto mensual -->
       <div class="field">
         <label class="label">Gasto mensual para la escuela ($)</label>
-        <input class="slider is-fullwidth is-danger" type="range" min="0" max="10000" step="100" value="2000" id="gasto">
+        <input class="slider is-fullwidth is-danger" type="range" min="0" max="10000" step="100" value="2000" id="gasto" name="gasto">
         <p id="gastoValue" class="has-text-weight-semibold">$2000</p>
       </div>
 
@@ -113,9 +122,9 @@
       <div class="field">
         <label class="label">¿Tienes alguna discapacidad?</label>
         <div class="select is-fullwidth">
-          <select>
-            <option>No</option>
-            <option>Sí</option>
+          <select name="discapacidad">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
           </select>
         </div>
       </div>
@@ -124,24 +133,17 @@
       <div class="field">
         <label class="label">¿Trabajas actualmente?</label>
         <div class="select is-fullwidth">
-          <select>
-            <option>No</option>
-            <option>Sí</option>
+          <select name="trabaja">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
           </select>
         </div>
-      </div>
-
-      <!-- Altura (en metros) -->
-      <div class="field">
-        <label class="label">Altura (m)</label>
-        <input class="slider is-fullwidth is-info" type="range" min="1.20" max="2.20" step="0.01" value="1.70" id="altura">
-        <p id="alturaValue" class="has-text-weight-semibold">1.70 m</p>
       </div>
 
       <!-- Botón -->
       <div class="field is-grouped is-justify-content-center">
         <div class="control">
-          <button class="button is-link is-rounded">Enviar</button>
+          <button class="button is-link is-rounded" type="submit">Enviar</button>
         </div>
       </div>
 
@@ -150,7 +152,6 @@
 </section>
 
 <script>
-  // Función helper para actualizar valores
   function updateValue(id, suffix="") {
     const input = document.getElementById(id);
     const output = document.getElementById(id + "Value");
@@ -166,7 +167,6 @@
   updateValue("promedio");
   updateValue("traslado", " min");
   updateValue("gasto", " $");
-  updateValue("altura", " m");
 </script>
 
 </body>
