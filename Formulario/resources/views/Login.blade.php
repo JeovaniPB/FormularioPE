@@ -10,53 +10,47 @@
 
 <section class="section">
   <div class="container">
+    <h1 class="title has-text-centered">Iniciar Sesión</h1>
+
     <div class="columns is-centered">
-      <div class="column is-4-desktop is-6-tablet">
-        <div class="box">
-          <h1 class="title has-text-centered">Iniciar Sesión</h1>
-          
-          <form>
-            <!-- Usuario -->
-            <div class="field">
-              <label class="label">Usuario</label>
-              <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Ingresa tu usuario" required>
-                <span class="icon is-small is-left">
-                  <i class="fas fa-user"></i>
-                </span>
-              </div>
-            </div>
+      <div class="column is-4">
+        <form class="box" method="POST" action="{{ route('login') }}">
+          @csrf
 
-            <!-- Contraseña -->
-            <div class="field">
-              <label class="label">Contraseña</label>
-              <div class="control has-icons-left">
-                <input class="input" type="password" placeholder="Ingresa tu contraseña" required>
-                <span class="icon is-small is-left">
-                  <i class="fas fa-lock"></i>
-                </span>
-              </div>
+          <!-- Email -->
+          <div class="field">
+            <label class="label">Correo</label>
+            <div class="control">
+              <input class="input" type="email" name="email" placeholder="correo@ejemplo.com" required>
             </div>
+          </div>
 
-            <!-- Botón -->
-            <div class="field">
-              <div class="control">
-                <button class="button is-link is-fullwidth is-rounded">Entrar</button>
-              </div>
+          <!-- Password -->
+          <div class="field">
+            <label class="label">Contraseña</label>
+            <div class="control">
+              <input class="input" type="password" name="password" placeholder="********" required>
             </div>
-          </form>
+          </div>
 
-          <!-- Extras -->
-          <p class="has-text-centered">
-            <a href="#">¿Olvidaste tu contraseña?</a>
-          </p>
-        </div>
+          <!-- Errores -->
+          @if($errors->any())
+            <div class="notification is-danger">
+              {{ $errors->first() }}
+            </div>
+          @endif
+
+          <!-- Botón -->
+          <div class="field">
+            <div class="control">
+              <button class="button is-link is-fullwidth">Iniciar Sesión</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Iconos (FontAwesome) -->
-<script src="https://kit.fontawesome.com/a2d9d5a56a.js" crossorigin="anonymous"></script>
 </body>
 </html>
