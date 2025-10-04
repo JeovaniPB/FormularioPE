@@ -111,8 +111,6 @@
           <h1 class="title is-3 mb-3">Formulario Escolar</h1>
           <p class="subtitle is-6 mt-3">Completa tus datos. Tardas menos de 2 minutos.</p>
 
-    <h1 class="title has-text-centered">Formulario Escolar</h1>
-
     <!-- Mensaje de éxito -->
     @if(session('success'))
       <div class="notification is-success">
