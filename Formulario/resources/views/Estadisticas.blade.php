@@ -17,7 +17,6 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Correo</th>
             <th>Nombre</th>
             <th>Sexo</th>
             <th>Edad</th>
@@ -30,15 +29,13 @@
             <th>Trabaja</th>
             <th>Gasto ($)</th>
             <th>Discapacidad</th>
-            <th>Altura (m)</th>
-            <th>Fecha</th>
+            <th>Altura (cm)</th>
           </tr>
         </thead>
         <tbody>
           @foreach($respuestas as $r)
           <tr>
             <td>{{ $r->id }}</td>
-            <td>{{ $r->correo }}</td>
             <td>{{ $r->nombre }}</td>
             <td>{{ $r->sexo }}</td>
             <td>{{ $r->edad }}</td>
@@ -51,16 +48,13 @@
             <td>{{ $r->trabaja ? 'Sí' : 'No' }}</td>
             <td>{{ $r->gasto }}</td>
             <td>{{ $r->discapacidad ? 'Sí' : 'No' }}</td>
-            <td>{{ $r->altura }}</td>
-            <td>{{ $r->created_at->format('d/m/Y H:i') }}</td>
+            <td>{{ $r->estatura }}</td>
           </tr>
           @endforeach
         </tbody>
       </table>
     </div>
-
   </div>
 </section>
-
 </body>
 </html>
