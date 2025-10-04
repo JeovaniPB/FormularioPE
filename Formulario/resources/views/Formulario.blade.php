@@ -104,14 +104,24 @@
 
 <section class="hero-bg">
   <div class="container">
+
     <div class="columns is-centered">
       <div class="column">
         <div class="title-wrap has-text-centered mb-4">
           <h1 class="title is-3 mb-3">Formulario Escolar</h1>
           <p class="subtitle is-6 mt-3">Completa tus datos. Tardas menos de 2 minutos.</p>
-        </div>
 
-        <form class="box glass-card p-5">
+    <h1 class="title has-text-centered">Formulario Escolar</h1>
+
+    <!-- Mensaje de éxito -->
+    @if(session('success'))
+      <div class="notification is-success">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    <form class="box" method="POST" action="{{ route('formulario.store') }}">
+      @csrf
           <!-- Correo -->
           <div class="field">
             <label class="label">Correo</label>
@@ -287,7 +297,6 @@
 </section>
 
 <script>
-  // Función helper para actualizar valores
   function updateValue(id, suffix="") {
     const input = document.getElementById(id);
     const output = document.getElementById(id + "Value");
@@ -303,7 +312,6 @@
   updateValue("promedio");
   updateValue("traslado", " min");
   updateValue("gasto", " $");
-  updateValue("altura", " m");
 </script>
 </body>
 </html>
