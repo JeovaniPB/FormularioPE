@@ -75,6 +75,41 @@
    </div>
 
 
+  {{-- Selector trabaja--}}
+  <div class="field">
+     <label class="label">Filtrar por Trabajo:</label>
+     <div class="control">
+       <!--div class="select is-fullwidth"-->
+         <select id="selectTrabaja" onchange="filtrar()">
+           <option value="ambosT">Si/No</option>
+      @foreach($respuestas->pluck('trabaja')->unique() as $t)
+        @php $texto = $t ? 'Sí' : 'No'; @endphp
+        <option value="{{ $texto }}">{{ $texto }}</option>
+      @endforeach
+         </select>
+       <!--/div-->
+     </div> 
+    </div>
+
+
+
+   {{-- Selector de discapacidad --}}
+  <div class="field">
+     <label class="label">Filtrar por Discapacidad:</label>
+     <div class="control">
+       <!--div class="select is-fullwidth"-->
+         <select id="selectDiscapacidad" onchange="filtrar()">
+           <option value="ambas">Si/No</option>
+      @foreach($respuestas->pluck('discapacidad')->unique() as $d)
+        @php $texto = $d ? 'Sí' : 'No'; @endphp
+        <option value="{{ $texto }}">{{ $texto }}</option>
+      @endforeach
+         </select>
+       <!--/div-->
+     </div>
+   </div>
+
+
 
  </div>  
 
@@ -104,7 +139,10 @@
           @foreach($respuestas as $r)
           <tr data-carrera="{{ $r->carrera }}"
               data-semestre="{{ $r->semestre }}"
-              data-sexo="{{ $r->sexo }}">
+              data-sexo="{{ $r->sexo }}"
+              data-trabaja="{{ $r->trabaja ? 'Sí' : 'No' }}"
+              data-discapacidad="{{ $r->discapacidad ? 'Sí' : 'No' }}"
+              >
             
             <td>{{ $r->nombre }}</td>
             <td>{{ $r->sexo }}</td>
@@ -227,7 +265,9 @@
     return {
       carrera: document.getElementById('selectCarrera').value,
       semestre: document.getElementById('selectSemestre').value,
-      sexo: document.getElementById('selectSexo').value
+      sexo: document.getElementById('selectSexo').value,
+      discapacidad: document.getElementById('selectDiscapacidad').value,
+      trabaja: document.getElementById('selectTrabaja').value
     };
   }
 
@@ -238,15 +278,17 @@
 
  // Aplica los 3 filtros juntos
   function filtrar() {
-    const { carrera, semestre, sexo } = getFiltros();
+    const { carrera, semestre, sexo, discapacidad, trabaja } = getFiltros();
     const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
 
     filas.forEach(tr => {
       const okCarrera  = coincide(tr.dataset.carrera,  carrera,  'todas');
       const okSemestre = coincide(tr.dataset.semestre, semestre, 'todos');
       const okSexo     = coincide(tr.dataset.sexo,     sexo,     'ambos');
+      const okDiscapacidad = coincide(tr.dataset.discapacidad, discapacidad, 'ambas');
+      const okTrabaja = coincide(tr.dataset.trabaja, trabaja, 'ambosT');
 
-      tr.style.display = (okCarrera && okSemestre && okSexo) ? '' : 'none';
+      tr.style.display = (okCarrera && okSemestre && okSexo && okDiscapacidad && okTrabaja) ? '' : 'none';
     });
   }
 
