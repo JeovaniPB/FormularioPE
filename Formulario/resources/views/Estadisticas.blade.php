@@ -126,26 +126,11 @@
 
     {{-- GRAFICAS --}}
     <div id="graficasContainer" class="is-hidden">
-      <div class="columns is-multiline">
-        {{-- Gráfica de Sexo --}}
-        <div class="column is-4 chart-card">
-          <button class="switch-btn" onclick="toggleChartType('sexoChart')">↻</button>
-          <canvas id="sexoChart"></canvas>
-        </div>
-
-        {{-- Gráfica de Trabaja --}}
-        <div class="column is-4 chart-card">
-          <button class="switch-btn" onclick="toggleChartType('trabajaChart')">↻</button>
-          <canvas id="trabajaChart"></canvas>
-        </div>
-
-        {{-- Gráfica de Discapacidad --}}
-        <div class="column is-4 chart-card">
-          <button class="switch-btn" onclick="toggleChartType('discapacidadChart')">↻</button>
-          <canvas id="discapacidadChart"></canvas>
-        </div>
+      <div class="columns is-multiline" id="graficasWrapper">
+        <!-- Aquí se insertan dinámicamente las gráficas -->
       </div>
     </div>
+
 
   </div>
 </section>
@@ -153,30 +138,122 @@
 <script>
   const baseColors = ['#36A2EB','#FF6384','#FFCE56','#4BC0C0','#9966FF'];
   const charts = {};
+  const camposGraficables = [
+    { campo: "sexo", label: "Sexo" },
+    { campo: "edad", label: "Edad" },
+    { campo: "carrera", label: "Carrera" },
+    { campo: "semestre", label: "Semestre" },
+    { campo: "estatura", label: "Estatura" },
+    { campo: "peso", label: "Peso" },
+    { campo: "promedio", label: "Promedio" },
+    { campo: "traslado", label: "Traslado (min)" },
+    { campo: "trabaja", label: "Trabaja" },
+    { campo: "gasto", label: "Gasto ($)" },
+    { campo: "discapacidad", label: "Discapacidad" }
+  ];
 
   // Datos completos 
   const respuestas = {!! json_encode($respuestas) !!};
 
-  // Función para calcular estadísticas por campo
-  function calcularStats(carrera, campo) {
-    const datosFiltrados = carrera === 'todas'
-      ? respuestas
-      : respuestas.filter(r => r.carrera === carrera);
+    function inicializarGraficasHTML() {
+      const wrapper = document.getElementById("graficasWrapper");
+      wrapper.innerHTML = ""; // limpiar
+
+      camposGraficables.forEach(({ campo, label }) => {
+        const div = document.createElement("div");
+        div.className = "column is-4 chart-card";
+        div.innerHTML = `
+          <button class="switch-btn" onclick="toggleChartType('${campo}Chart')">↻</button>
+          <canvas id="${campo}Chart"></canvas>
+        `;
+        wrapper.appendChild(div);
+      });
+    }
+
+
+  // Normaliza valores de celdas (mapa de sí/no y sin dato)
+  function normalizarValor(raw) {
+    if (raw === undefined || raw === null) return 'Sin dato';
+    const s = String(raw).trim();
+    if (s === '') return 'Sin dato';
+    const low = s.toLowerCase();
+    if (['sí','si','s','sí','true','1'].includes(low)) return 'Sí';
+    if (['no','n','false','0'].includes(low)) return 'No';
+    return s; // valor libre (ej. "Masculino", "Femenino", "18 años")
+  }
+
+  // Calcula estadísticas leyendo las filas VISIBLES de la tabla (respeta filtros)
+  function calcularStatsDesdeTabla(campo) {
+    // Mapa de columnas según tu tabla (0-based)
+    const col = {
+      nombre: 0,
+      sexo: 1,
+      edad: 2,
+      carrera: 3,
+      semestre: 4,
+      estatura: 5,
+      peso: 6,
+      promedio: 7,
+      traslado: 8,
+      trabaja: 9,
+      gasto: 10,
+      discapacidad: 11
+    }[campo];
 
     const conteo = {};
-    datosFiltrados.forEach(r => {
-      let valor = r[campo];
+    const rows = document.querySelectorAll('#tablaRespuestas tbody tr');
+    rows.forEach(row => {
+      if (row.style.display === 'none') return; // ignorar filas ocultas por filtros
+      let raw = '';
+      if (typeof col !== 'undefined') {
+        raw = (row.children[col] && row.children[col].innerText) ? row.children[col].innerText.trim() : '';
+      } else {
+        // fallback: intentar dataset
+        raw = row.dataset[campo] ?? '';
+      }
 
-      //console.log(`Procesando valor para campo ${campo}:`, valor);
-      // Mapear 0/1 a "No"/"Sí"
-      if (valor === 0 || valor === '0' || valor === false) valor = 'No';
-      if (valor === 1 || valor === '1' || valor === true) valor = 'Sí';
-      if (!valor) valor = 'Sin dato';
-
+      const valor = normalizarValor(raw);
       conteo[valor] = (conteo[valor] || 0) + 1;
     });
+
+    // Si no hay filas visibles, devolver al menos un "Sin dato" con 0 (evita charts vacíos)
+    if (Object.keys(conteo).length === 0) {
+      conteo['Sin dato'] = 0;
+    }
     return conteo;
   }
+
+  inicializarGraficasHTML();
+  actualizarGraficas();
+
+
+  // Actualizar gráficas leyendo filas visibles (ya no depende sólo de selectCarrera)
+  function actualizarGraficas() {
+    camposGraficables.forEach(({ campo, label }) => {
+      const data = calcularStatsDesdeTabla(campo);
+      crearChart(campo + "Chart", label, data);
+    });
+  }
+
+
+  // Filtrar (oculta filas) y ACTUALIZAR gráficas
+  function filtrar() {
+    const { carrera, semestre, sexo } = getFiltros();
+    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
+
+    filas.forEach(tr => {
+      const okCarrera  = coincide(tr.dataset.carrera,  carrera,  'todas');
+      const okSemestre = coincide(tr.dataset.semestre, semestre, 'todos');
+      const okSexo     = coincide(tr.dataset.sexo,     sexo,     'ambos');
+
+      tr.style.display = (okCarrera && okSemestre && okSexo) ? '' : 'none';
+    });
+
+    // <-- AQUI está la clave: volver a calcular las gráficas con las filas visibles
+    actualizarGraficas();
+  }
+
+
 
   // Crear/actualizar gráficas
   function crearChart(id, label, data, type='pie') {
@@ -209,17 +286,6 @@
     charts[id] = chart;
   }
 
-  // Inicializar con todas las carreras
-  function actualizarGraficas() {
-    const seleccion = document.getElementById('selectCarrera').value;
-    const sexoData = calcularStats(seleccion, 'sexo');
-    const trabajaData = calcularStats(seleccion, 'trabaja');
-    const discapacidadData = calcularStats(seleccion, 'discapacidad');
-
-    crearChart('sexoChart', 'Sexo', sexoData);
-    crearChart('trabajaChart', 'Trabaja', trabajaData);
-    crearChart('discapacidadChart', 'Discapacidad', discapacidadData);
-  }
 
   // Filtra tabla y actualiza gráficas
 
@@ -236,51 +302,6 @@
     return valorFiltro === comodin || String(valorFila) === String(valorFiltro);
   }
 
- // Aplica los 3 filtros juntos
-  function filtrar() {
-    const { carrera, semestre, sexo } = getFiltros();
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-
-    filas.forEach(tr => {
-      const okCarrera  = coincide(tr.dataset.carrera,  carrera,  'todas');
-      const okSemestre = coincide(tr.dataset.semestre, semestre, 'todos');
-      const okSexo     = coincide(tr.dataset.sexo,     sexo,     'ambos');
-
-      tr.style.display = (okCarrera && okSemestre && okSexo) ? '' : 'none';
-    });
-  }
-
-/*
-  function filtrarCarrera() {
-    const seleccion = document.getElementById('selectCarrera').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const carrera = fila.getAttribute('data-carrera');
-      fila.style.display = (seleccion === 'todas' || carrera === seleccion) ? '' : 'none';
-    });
-
-    actualizarGraficas();
-  }
-
-
-  function filtrarSemestre() {
-    const seleccion = document.getElementById('selectSemestre').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const semestre = fila.children[4].textContent; // Columna Semestre
-      fila.style.display = (seleccion === 'todos' || semestre === seleccion) ? '' : 'none';
-    });
-  }
-
-  function filtrarSexo() {
-    const seleccion = document.getElementById('selectSexo').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const sexo = fila.children[1].textContent; // Columna Sexo
-      fila.style.display = (seleccion === 'ambos' || sexo === seleccion) ? '' : 'none';
-    });
-  }
-*/
   // Alternar vista tabla / gráficas
   function toggleVista() {
     const tabla = document.getElementById('tablaContainer');
@@ -290,18 +311,32 @@
     graficas.classList.toggle('is-hidden');
 
     if (!graficas.classList.contains('is-hidden')) {
+      // Espera un poco para que el contenedor se renderice y se mida bien
       setTimeout(() => {
-        Object.values(charts).forEach(c => c.resize());
+        actualizarGraficas(); 
       }, 100);
     }
   }
 
+
   // Cambiar tipo de gráfica
-  function toggleChartType(id) {
-    const chart = charts[id];
-    chart.config.type = chart.config.type === 'pie' ? 'bar' : 'pie';
+  function toggleChartType(chartId) {
+    const chart = charts[chartId];
+    if (!chart) return;
+
+    if (chart.config.type === 'bar') {
+      chart.config.type = 'pie';
+      chart.options.scales = {}; // limpiar ejes de barras
+    } else {
+      chart.config.type = 'bar';
+      chart.options.scales = {
+        x: { beginAtZero: true },
+        y: { beginAtZero: true }
+      };
+    }
     chart.update();
   }
+
 
 
 // === ORDENAMIENTO DE TABLA (corregido) ===
@@ -384,7 +419,9 @@ document.querySelectorAll("#tablaRespuestas th.sortable").forEach((th) => {
 });
 
 
+  inicializarGraficasHTML();
   actualizarGraficas();
+
 </script>
 </body>
 </html>
