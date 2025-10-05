@@ -53,15 +53,15 @@
           <tr>
             <th>Nombre</th>
             <th>Sexo</th>
-            <th>Edad</th>
+            <th class="sortable">Edad</th>
             <th>Carrera</th>
-            <th>Semestre</th>
-            <th>Estatura</th>
-            <th>Peso</th>
-            <th>Promedio</th>
-            <th>Traslado (min)</th>
+            <th class="sortable">Semestre</th>
+            <th class="sortable">Estatura</th>
+            <th class="sortable">Peso</th>
+            <th class="sortable">Promedio</th>
+            <th class="sortable">Traslado (min)</th>
             <th>Trabaja</th>
-            <th>Gasto ($)</th>
+            <th class="sortable">Gasto ($)</th>
             <th>Discapacidad</th>
           </tr>
         </thead>
@@ -216,6 +216,88 @@
     chart.config.type = chart.config.type === 'pie' ? 'bar' : 'pie';
     chart.update();
   }
+
+
+// === ORDENAMIENTO DE TABLA (corregido) ===
+document.querySelectorAll("#tablaRespuestas th.sortable").forEach((th) => {
+  th.style.cursor = "pointer";
+  let asc = true; // estado de orden por cada columna
+
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const tbody = table.querySelector("tbody");
+    const allRows = Array.from(tbody.querySelectorAll("tr"));
+
+    // Obtener índice real de la columna (entre todos los th de la fila de encabezado)
+    const headerRow = th.closest('thead').querySelector('tr');
+    const ths = Array.from(headerRow.children);
+    const colIndex = ths.indexOf(th);
+    if (colIndex === -1) return; // seguridad
+
+    // Solo ordenar las filas visibles (las ocultas por el filtro se quedan en su lugar)
+    const visibleRows = allRows.filter(row => row.style.display !== 'none');
+
+    // Función para extraer valor numérico o texto limpio de una celda
+    const parseCell = (text) => {
+      const raw = (text ?? '').toString().trim();
+      if (raw === '' || /^(sin dato|n\/a|\-)$/i.test(raw)) return { isEmpty: true, isNumber: false, num: NaN, str: '' };
+
+      // Buscar la primera secuencia numérica (soporta miles y decimales con coma/punto)
+      const numMatch = raw.match(/-?\d+[0-9.,]*/);
+      if (numMatch) {
+        // Normalizar: quitar separadores de miles y usar punto decimal
+        let cleaned = numMatch[0].replace(/\.(?=\d{3}(\D|$))/g, ''); // elimina puntos como separador de miles si existen
+        cleaned = cleaned.replace(/,/g, '.'); // comas -> punto decimal
+        cleaned = cleaned.replace(/[^\d.-]/g, ''); // dejar solo dígitos, punto y guión
+        const n = parseFloat(cleaned);
+        if (!isNaN(n)) return { isEmpty: false, isNumber: true, num: n, str: raw.toLowerCase() };
+      }
+
+      // Si no es numérico, usar comparación de texto (minúsculas para consistencia)
+      return { isEmpty: false, isNumber: false, num: NaN, str: raw.toLowerCase() };
+    };
+
+    // Ordenar visibleRows
+    visibleRows.sort((rowA, rowB) => {
+      const aText = rowA.children[colIndex]?.innerText ?? '';
+      const bText = rowB.children[colIndex]?.innerText ?? '';
+      const A = parseCell(aText);
+      const B = parseCell(bText);
+
+      // Ambos numéricos -> comparación numérica
+      if (A.isNumber && B.isNumber) {
+        return asc ? (A.num - B.num) : (B.num - A.num);
+      }
+      // Uno numérico y otro no -> poner número primero (ajusta si quieres lo contrario)
+      if (A.isNumber && !B.isNumber) return asc ? -1 : 1;
+      if (!A.isNumber && B.isNumber) return asc ? 1 : -1;
+
+      // Ambos no numéricos -> comparación de strings
+      if (A.str < B.str) return asc ? -1 : 1;
+      if (A.str > B.str) return asc ? 1 : -1;
+      return 0;
+    });
+
+    // Reconstruir el tbody manteniendo las filas ocultas en sus posiciones originales:
+    const sortedQueue = visibleRows.slice();
+    const finalRows = [];
+    allRows.forEach(row => {
+      if (row.style.display === 'none') {
+        finalRows.push(row);
+      } else {
+        finalRows.push(sortedQueue.shift());
+      }
+    });
+
+    // Reinsertar en el DOM
+    finalRows.forEach(r => tbody.appendChild(r));
+
+    // Alternar sentido de orden para el próximo clic
+    asc = !asc;
+  });
+});
+
+
   actualizarGraficas();
 </script>
 </body>
