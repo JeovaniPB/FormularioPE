@@ -28,20 +28,55 @@
   <div class="container">
     <h1 class="title has-text-centered">Estadísticas de Respuestas</h1>
 
-    {{-- Selector de carrera --}}
-    <div class="field">
-      <label class="label">Filtrar por carrera:</label>
-      <div class="control">
-        <div class="select is-fullwidth">
-          <select id="selectCarrera" onchange="filtrarCarrera()">
-            <option value="todas">Todas las carreras</option>
-            @foreach($respuestas->pluck('carrera')->unique() as $carrera)
-              <option value="{{ $carrera }}">{{ $carrera }}</option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-    </div>
+ <div class="field is-grouped is-grouped-multiline">
+   {{-- Selector de carrera --}}
+   <div class="field">
+     <label class="label">Filtrar por carrera:</label>
+     <div class="control">
+       <!--div class="select is-fullwidth"-->
+         <select id="selectCarrera" onchange="filtrar()">
+           <option value="todas">Todas las carreras</option>
+           @foreach($respuestas->pluck('carrera')->unique() as $carrera)
+             <option value="{{ $carrera }}">{{ $carrera }}</option>
+           @endforeach
+         </select>
+       <!--/div-->
+     </div>
+   </div>
+
+   {{-- Selector de semestre --}}
+   <div class="field">
+     <label class="label">Filtrar por Semestre:</label>
+     <div class="control">
+       <!--div class="select is-fullwidth"-->
+         <select id="selectSemestre" onchange="filtrar()">
+           <option value="todos">Todos los semestres</option>
+           @foreach($respuestas->pluck('semestre')->unique()->sort() as $semestre)
+             <option value="{{ $semestre }}">{{ $semestre }}</option>
+           @endforeach
+         </select>
+       <!--/div-->
+     </div>
+   </div>
+
+   {{-- Selector de Sexo --}}
+  <div class="field">
+     <label class="label">Filtrar por Sexo:</label>
+     <div class="control">
+       <!--div class="select is-fullwidth"-->
+         <select id="selectSexo" onchange="filtrar()">
+           <option value="ambos">Todos</option>
+           @foreach($respuestas->pluck('sexo')->unique() as $sexo)
+             <option value="{{ $sexo }}">{{ $sexo }}</option>
+           @endforeach
+         </select>
+       <!--/div-->
+     </div>
+   </div>
+
+
+
+ </div>  
 
     <div class="has-text-right mb-3">
       <button class="button is-link is-light" onclick="toggleVista()">Cambiar vista</button>
@@ -67,7 +102,10 @@
         </thead>
         <tbody>
           @foreach($respuestas as $r)
-          <tr data-carrera="{{ $r->carrera }}">
+          <tr data-carrera="{{ $r->carrera }}"
+              data-semestre="{{ $r->semestre }}"
+              data-sexo="{{ $r->sexo }}">
+            
             <td>{{ $r->nombre }}</td>
             <td>{{ $r->sexo }}</td>
             <td>{{ $r->edad }}</td>
@@ -184,6 +222,35 @@
   }
 
   // Filtra tabla y actualiza gráficas
+
+  function getFiltros() {
+    return {
+      carrera: document.getElementById('selectCarrera').value,
+      semestre: document.getElementById('selectSemestre').value,
+      sexo: document.getElementById('selectSexo').value
+    };
+  }
+
+  // Compara con comodín
+  function coincide(valorFila, valorFiltro, comodin) {
+    return valorFiltro === comodin || String(valorFila) === String(valorFiltro);
+  }
+
+ // Aplica los 3 filtros juntos
+  function filtrar() {
+    const { carrera, semestre, sexo } = getFiltros();
+    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
+
+    filas.forEach(tr => {
+      const okCarrera  = coincide(tr.dataset.carrera,  carrera,  'todas');
+      const okSemestre = coincide(tr.dataset.semestre, semestre, 'todos');
+      const okSexo     = coincide(tr.dataset.sexo,     sexo,     'ambos');
+
+      tr.style.display = (okCarrera && okSemestre && okSexo) ? '' : 'none';
+    });
+  }
+
+/*
   function filtrarCarrera() {
     const seleccion = document.getElementById('selectCarrera').value;
     const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
@@ -195,6 +262,25 @@
     actualizarGraficas();
   }
 
+
+  function filtrarSemestre() {
+    const seleccion = document.getElementById('selectSemestre').value;
+    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
+    filas.forEach(fila => {
+      const semestre = fila.children[4].textContent; // Columna Semestre
+      fila.style.display = (seleccion === 'todos' || semestre === seleccion) ? '' : 'none';
+    });
+  }
+
+  function filtrarSexo() {
+    const seleccion = document.getElementById('selectSexo').value;
+    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
+    filas.forEach(fila => {
+      const sexo = fila.children[1].textContent; // Columna Sexo
+      fila.style.display = (seleccion === 'ambos' || sexo === seleccion) ? '' : 'none';
+    });
+  }
+*/
   // Alternar vista tabla / gráficas
   function toggleVista() {
     const tabla = document.getElementById('tablaContainer');
