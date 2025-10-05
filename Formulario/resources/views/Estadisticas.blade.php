@@ -342,8 +342,6 @@
     return valorFiltro === comodin || String(valorFila) === String(valorFiltro);
   }
 
-<<<<<<< HEAD
-=======
  // Aplica los 3 filtros juntos
   function filtrar() {
     const { carrera, semestre, sexo, discapacidad, trabaja } = getFiltros();
@@ -360,38 +358,6 @@
     });
   }
 
-/*
-  function filtrarCarrera() {
-    const seleccion = document.getElementById('selectCarrera').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const carrera = fila.getAttribute('data-carrera');
-      fila.style.display = (seleccion === 'todas' || carrera === seleccion) ? '' : 'none';
-    });
-
-    actualizarGraficas();
-  }
-
-
-  function filtrarSemestre() {
-    const seleccion = document.getElementById('selectSemestre').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const semestre = fila.children[4].textContent; // Columna Semestre
-      fila.style.display = (seleccion === 'todos' || semestre === seleccion) ? '' : 'none';
-    });
-  }
-
-  function filtrarSexo() {
-    const seleccion = document.getElementById('selectSexo').value;
-    const filas = document.querySelectorAll('#tablaRespuestas tbody tr');
-    filas.forEach(fila => {
-      const sexo = fila.children[1].textContent; // Columna Sexo
-      fila.style.display = (seleccion === 'ambos' || sexo === seleccion) ? '' : 'none';
-    });
-  }
-*/
->>>>>>> 65c61bf4e5a580f67389764dd89735542bb20dbc
   // Alternar vista tabla / gráficas
   function toggleVista() {
     const tabla = document.getElementById('tablaContainer');
