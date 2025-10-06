@@ -5,8 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Estadísticas</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+  <link rel="stylesheet" href="{{ asset('../css/uncss.css') }}">
   <style>
+    
+
+    html, body {
+  min-height: 100%;
+  background-color: #eaf2ff;   /* elige tu azul (#eaf2ff es suave) */
+}
+
+
+
+/* Asegura que nada de tus wrappers fuerce un fondo blanco */
+.stats-wrapper { background: transparent; }
+
     .chart-card { position: relative; }
     .switch-btn {
       position: absolute;
@@ -20,26 +34,175 @@
       cursor: pointer;
       font-size: 0.8em;
     }
-  </style>
+
+    .stats-wrapper { min-height: 100vh; position: relative; }
+      
+
+
+
+    .stats-box.box {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(0,0,0,.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.5rem 1.5rem 2rem;
+    }
+
+    .filters-bar{
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      justify-content: center;
+      align-items: center;
+    }
+    
+.filters-bar .select,
+.filters-bar .select select{
+  width: 100%;
+  height: 2.6rem;
+  border-radius: 12px;
+  border-color: #e6e9f0;
+ transition: box-shadow .2s, border-color .2s, transform .05s;
+
+}
+
+ .filters-bar .select select:focus {
+    border-color: #8ba7ff !important;
+    box-shadow: 0 0 0 0.2rem rgba(107, 139, 255, 0.15) !important;
+  }
+  
+
+    .filters-bar .field { 
+      width: 210px;  
+      margin-bottom: 0; 
+    }
+    .filters-bar .label { 
+    font-size: 1rem; 
+    margin-bottom: .35rem;             
+    font-weight: 700;  
+    color: #111827;      
+    letter-spacing: .2px; 
+    }
+
+    .btn-gradient {
+    background-image: linear-gradient(90deg, #5563de, #7b8dff);
+    color: #fff !important;
+    border: none;
+    border-radius: 999px;
+    padding: 0.9rem 1.4rem;
+    box-shadow: 0 8px 18px rgba(85, 99, 222, 0.25);
+    transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
+    margin-bottom: 1rem;
+  }
+  .btn-gradient:hover { filter: brightness(1.03); box-shadow: 0 10px 22px rgba(85,99,222,.32); }
+  .btn-gradient:active { transform: translateY(1px); }
+
+  /* --- Tarjeta de la tabla --- */
+#tablaContainer.table-container{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 12px 28px rgba(2,6,23,.10);
+  border:1px solid #eef1f7;
+  overflow:hidden; /* respeta el redondeado */
+}
+
+/* --- Tabla --- */
+#tablaRespuestas{
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+}
+
+/* Sticky header */
+#tablaRespuestas thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#f6f8ff !important;
+  color:#111827;
+  font-weight:700;
+  letter-spacing:.2px;
+  border-bottom:1px solid #e6e9f0 !important;
+}
+
+/* Filas alternadas + hover suave (complementa Bulma) */
+#tablaRespuestas tbody tr:nth-child(even){ background:#fbfcff; }
+#tablaRespuestas tbody tr:hover{ background:#eef4ff; }
+
+/* Padding consistente */
+#tablaRespuestas th,
+#tablaRespuestas td{
+  padding:14px 16px !important;
+  vertical-align:middle;
+  border-bottom:1px solid #eef1f7;
+}
+
+/* Alinear números a la derecha con números tabulares */
+
+
+
+/* Chips Sí/No para columnas 10 (Trabaja) y 12 (Discapacidad) sin tocar Blade */
+#tablaRespuestas tbody td:nth-child(10),
+#tablaRespuestas tbody td:nth-child(12){
+  position:relative;
+  color:transparent;               /* oculto el texto original */
+}
+#tablaRespuestas tbody tr[data-trabaja="Sí"] td:nth-child(10)::after,
+#tablaRespuestas tbody tr[data-discapacidad="Sí"] td:nth-child(12)::after{
+  content:"Sí";
+  background:#ecfdf5; color:#047857;
+}
+#tablaRespuestas tbody tr[data-trabaja="No"] td:nth-child(10)::after,
+#tablaRespuestas tbody tr[data-discapacidad="No"] td:nth-child(12)::after{
+  content:"No";
+  background:#fef2f2; color:#b91c1c;
+}
+#tablaRespuestas tbody td:nth-child(10)::after,
+#tablaRespuestas tbody td:nth-child(12)::after{
+  position:absolute; inset:0;
+  margin:auto; width:max-content; height:fit-content;
+  padding:.28rem .6rem; border-radius:999px;
+  font-weight:700; font-size:.85rem; line-height:1;
+}
+
+/* Indicadores de orden para th.sortable */
+#tablaRespuestas th.sortable{ cursor:pointer; }
+#tablaRespuestas th.sortable::after{
+  content:" ↕"; color:#94a3b8; font-size:.85em;
+}
+#tablaRespuestas th.sortable.is-asc::after { content:" ↑"; color:#5563de; }
+#tablaRespuestas th.sortable.is-desc::after{ content:" ↓"; color:#5563de; }
+
+
+
+
+</style>
 </head>
-<body class="has-background-light">
+<body>
+ 
+<section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
+  <div class="stats-box box">
+    <h1 class="title has-text-centered has-text-weight-bold">Estadísticas de Respuestas</h1>
 
-<section class="section">
-  <div class="container">
-    <h1 class="title has-text-centered">Estadísticas de Respuestas</h1>
-
- <div class="field is-grouped is-grouped-multiline">
+ <div class="filters-bar">
    {{-- Selector de carrera --}}
    <div class="field">
      <label class="label">Filtrar por carrera:</label>
      <div class="control">
        <!--div class="select is-fullwidth"-->
+       <div class="select">
          <select id="selectCarrera" onchange="filtrar()">
            <option value="todas">Todas las carreras</option>
            @foreach($respuestas->pluck('carrera')->unique() as $carrera)
              <option value="{{ $carrera }}">{{ $carrera }}</option>
            @endforeach
          </select>
+       </div>
        <!--/div-->
      </div>
    </div>
@@ -48,14 +211,14 @@
    <div class="field">
      <label class="label">Filtrar por Semestre:</label>
      <div class="control">
-       <!--div class="select is-fullwidth"-->
+       <div class="select">
          <select id="selectSemestre" onchange="filtrar()">
            <option value="todos">Todos los semestres</option>
            @foreach($respuestas->pluck('semestre')->unique()->sort() as $semestre)
              <option value="{{ $semestre }}">{{ $semestre }}</option>
            @endforeach
          </select>
-       <!--/div-->
+       </div>
      </div>
    </div>
 
@@ -63,14 +226,14 @@
   <div class="field">
      <label class="label">Filtrar por Sexo:</label>
      <div class="control">
-       <!--div class="select is-fullwidth"-->
-         <select id="selectSexo" onchange="filtrar()">
-           <option value="ambos">Todos</option>
-           @foreach($respuestas->pluck('sexo')->unique() as $sexo)
-             <option value="{{ $sexo }}">{{ $sexo }}</option>
-           @endforeach
-         </select>
-       <!--/div-->
+      <div class="select">
+        <select id="selectSexo" onchange="filtrar()">
+       <option value="ambos">Todos</option>
+       @foreach($respuestas->pluck('sexo')->unique() as $sexo)
+         <option value="{{ $sexo }}">{{ $sexo }}</option>
+       @endforeach
+     </select>
+      </div>
      </div>
    </div>
 
@@ -79,15 +242,15 @@
   <div class="field">
      <label class="label">Filtrar por Trabajo:</label>
      <div class="control">
-       <!--div class="select is-fullwidth"-->
-         <select id="selectTrabaja" onchange="filtrar()">
-           <option value="ambosT">Si/No</option>
-      @foreach($respuestas->pluck('trabaja')->unique() as $t)
-        @php $texto = $t ? 'Sí' : 'No'; @endphp
-        <option value="{{ $texto }}">{{ $texto }}</option>
-      @endforeach
-         </select>
-       <!--/div-->
+     <div class="select">
+       <select id="selectTrabaja" onchange="filtrar()">
+             <option value="ambosT">Si/No</option>
+        @foreach($respuestas->pluck('trabaja')->unique() as $t)
+          @php $texto = $t ? 'Sí' : 'No'; @endphp
+          <option value="{{ $texto }}">{{ $texto }}</option>
+        @endforeach
+           </select>
+     </div> 
      </div> 
     </div>
 
@@ -97,26 +260,29 @@
   <div class="field">
      <label class="label">Filtrar por Discapacidad:</label>
      <div class="control">
-       <!--div class="select is-fullwidth"-->
-         <select id="selectDiscapacidad" onchange="filtrar()">
-           <option value="ambas">Si/No</option>
-      @foreach($respuestas->pluck('discapacidad')->unique() as $d)
-        @php $texto = $d ? 'Sí' : 'No'; @endphp
-        <option value="{{ $texto }}">{{ $texto }}</option>
-      @endforeach
-         </select>
-       <!--/div-->
-     </div>
+     <div class="select">
+       <select id="selectDiscapacidad" onchange="filtrar()">
+             <option value="ambas">Si/No</option>
+        @foreach($respuestas->pluck('discapacidad')->unique() as $d)
+          @php $texto = $d ? 'Sí' : 'No'; @endphp
+          <option value="{{ $texto }}">{{ $texto }}</option>
+        @endforeach
+           </select>
+     </div> 
+      </div>
    </div>
 
+   <!-- Acciones -->
+    
+     <div class="filters-actions">
+       <button class="button btn-gradient" onclick="toggleVista()">Cambiar vista</button>
+     </div>
 
 
  </div>  
 
-    <div class="has-text-right mb-3">
-      <button class="button is-link is-light" onclick="toggleVista()">Cambiar vista</button>
-    </div>
 
+    
     <div id="tablaContainer" class="table-container">
       <table class="table is-fullwidth is-striped is-hoverable is-bordered" id="tablaRespuestas">
         <thead>
