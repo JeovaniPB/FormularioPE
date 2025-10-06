@@ -522,6 +522,7 @@
 
       tr.style.display = (okCarrera && okSemestre && okSexo && okDiscapacidad && okTrabaja) ? '' : 'none';
     });
+    actualizarGraficas(); 
   }
 
   // Alternar vista tabla / gráficas
