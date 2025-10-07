@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Formulario Escolar</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -204,7 +205,6 @@
 
     <form class="box" method="POST" action="{{ route('formulario.store') }}">
       @csrf
-
           <!-- Correo -->
           <div class="field">
             <label class="label">Correo</label>
@@ -241,31 +241,9 @@
               <div class="field">
                 <label class="label">Semestre</label>
                 <input class="input is-fullwidth" type="number" min="1" max="10" value="1" id="semestre" name="semestre" required>
-                <div class="value-line"><span id="semestreValue" class="value-badge">1° semestre</span></div>
-                <label class="label">¿Tienes alguna discapacidad?</label>
-                <div class="select is-fullwidth">
-                  <select name="discapacidad">
-                    <option value="0">No</option>
-                    <option value="1">Sí</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="column">
-              <div class="field">
-                <label class="label">¿Trabajas actualmente?</label>
-                <div class="select is-fullwidth">
-                  <select name="trabaja">
-                    <option value="0">No</option>
-                    <option value="1">Sí</option>
-                  </select>
-                </div>
               </div>
             </div>
           </div>
-
-          
 
           <!-- Carrera -->
           <div class="field">
@@ -329,8 +307,8 @@
                 <div class="select is-fullwidth">
                   <select name="discapacidad" required>
                     <option value="" disabled selected>Selecciona</option>
-                    <option>No</option>
-                    <option>Sí</option>
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -342,8 +320,8 @@
                 <div class="select is-fullwidth">
                   <select name="trabaja" required>
                     <option value="" disabled selected>Selecciona</option>
-                    <option>No</option>
-                    <option>Sí</option>
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -385,8 +363,8 @@
 
 
           <div class="control">
-  <a href="{{ url()->previous() }}" class="button btn-outline is-rounded">Atrás</a>
-</div>
+            <a href="{{ url()->previous() }}" class="button btn-outline is-rounded">Atrás</a>
+          </div>
 
             <div class="control">
               <button type="submit" class="button btn-gradient">Enviar</button>
@@ -444,7 +422,6 @@
   updateValue("peso", " kg");
   updateValue("promedio");
   updateValue("traslado", " min");
-
   updateValue("gasto", " $");
   const successNotification = document.querySelector('.notification.is-success');
 
@@ -463,7 +440,6 @@
     setTimeout(() => {
       Notification.style.transition = "opacity 0.5s ease";
       Notification.style.opacity = "0";
-
       setTimeout(() => Notification.remove(), 500);
     }, 5000); 
   }
