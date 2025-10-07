@@ -124,7 +124,7 @@
           <div class="field">
             <label class="label">Correo</label>
             <div class="control has-icons-left">
-              <input class="input" type="email" placeholder="ejemplo@correo.com" required>
+              <input class="input" name="correo" type="email" placeholder="ejemplo@correo.com" required>
               <span class="icon is-left">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8"><path d="M20 4H4a2 2 0 0 0-2 2v12a2
                  2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8.236l7.386
@@ -137,7 +137,7 @@
           <div class="field">
             <label class="label">Nombre completo</label>
             <div class="control">
-              <input class="input" type="text" placeholder="Tu nombre completo" required>
+              <input class="input" name="nombre" type="text" placeholder="Tu nombre completo" required>
             </div>
           </div>
 
@@ -149,7 +149,7 @@
               <div class="field">
                 <label class="label">Sexo</label>
                 <div class="select is-fullwidth">
-                  <select>
+                  <select name="sexo">
                     <option>Masculino</option>
                     <option>Femenino</option>
                   </select>
@@ -161,9 +161,9 @@
               <div class="field">
                 <label class="label">¿Tienes alguna discapacidad?</label>
                 <div class="select is-fullwidth">
-                  <select>
-                    <option>No</option>
-                    <option>Sí</option>
+                  <select name="discapacidad">
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -173,9 +173,9 @@
               <div class="field">
                 <label class="label">¿Trabajas actualmente?</label>
                 <div class="select is-fullwidth">
-                  <select>
-                    <option>No</option>
-                    <option>Sí</option>
+                  <select name="trabaja">
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -187,7 +187,7 @@
             <label class="label">Carrera</label>
             <div class="control">
               <div class="select is-fullwidth">
-                <select>
+                <select name="carrera">
                   <option>Ingeniería en Computación</option>
                   <option>Ingeniería Química</option>
                   <option>Ingeniería en Diseño</option>
@@ -207,14 +207,14 @@
             <div class="column">
               <div class="field">
                 <label class="label">Edad</label>
-                <input class="input is-fullwidth" type="number" min="15" max="60" value="20" id="edad">
+                <input class="input is-fullwidth" name="edad" type="number" min="15" max="60" value="20" id="edad">
                 <div class="value-line"><span id="edadValue" class="value-badge">20 años</span></div>
               </div>
             </div>
             <div class="column">
               <div class="field">
                 <label class="label">Semestre</label>
-                <input class="input is-fullwidth" type="number" min="1" max="10" value="1" id="semestre">
+                <input class="input is-fullwidth" type="number" name="semestre" min="1" max="10" value="1" id="semestre">
                 <div class="value-line"><span id="semestreValue" class="value-badge">1° semestre</span></div>
               </div>
             </div>
@@ -225,14 +225,14 @@
             <div class="column">
               <div class="field">
                 <label class="label">Estatura (cm)</label>
-                <input class="input is-fullwidth" type="number" min="120" max="220" value="170" id="estatura">
+                <input class="input is-fullwidth" type="number" name="estatura" min="120" max="220" value="170" id="estatura">
                 <div class="value-line"><span id="estaturaValue" class="value-badge">170 cm</span></div>
               </div>
             </div>
             <div class="column">
               <div class="field">
                 <label class="label">Peso (kg)</label>
-                <input class="input is-fullwidth " type="number" min="40" max="200" value="70" id="peso">
+                <input class="input is-fullwidth " type="number" name="peso" min="40" max="200" value="70" id="peso">
                 <div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>
               </div>
             </div>
@@ -250,7 +250,7 @@
             <div class="column">
               <div class="field">
                 <label class="label">Promedio anterior</label>
-                <input class="input is-fullwidth " type="number" min="0" max="10" step="0.1" value="8" id="promedio">
+                <input class="input is-fullwidth " type="number" name="promedio" min="0" max="10" step="0.1" value="8" id="promedio">
                 <div class="value-line"><span id="promedioValue" class="value-badge">8.0</span></div>
               </div>
             </div>
@@ -261,14 +261,14 @@
             <div class="column">
               <div class="field">
                 <label class="label">Tiempo de traslado (min)</label>
-                <input class="input is-fullwidth " type="number" min="0" max="180" step="5" value="30" id="traslado">
+                <input class="input is-fullwidth " type="number" name="traslado" min="0" max="180" step="5" value="30" id="traslado">
                 <div class="value-line"><span id="trasladoValue" class="value-badge">30 min</span></div>
               </div>
             </div>
             <div class="column">
               <div class="field">
                 <label class="label">Gasto mensual para la escuela ($)</label>
-                <input class="input is-fullwidth " type="number" min="0" max="10000" step="100" value="2000" id="gasto">
+                <input class="input is-fullwidth " type="number" name="gasto" min="0" max="10000" step="100" value="2000" id="gasto">
                 <div class="value-line"><span id="gastoValue" class="value-badge">$2,000</span></div>
               </div>
             </div>

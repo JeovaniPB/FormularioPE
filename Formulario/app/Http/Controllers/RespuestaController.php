@@ -16,6 +16,7 @@ class RespuestaController extends Controller
     // Guardar los datos del formulario
     public function store(Request $request)
     {
+        //dd($request->all());
         // Validación básica 
         $request->validate([
             'correo' => 'required|email|unique:respuestas,correo',
