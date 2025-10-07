@@ -282,7 +282,7 @@
           </div>
           
           <div class="field is-grouped is-justify-content-center">
-             <a href="{{ url('/Login') }}">Soy Administrador</a>
+             <a href="{{ url('/login') }}">Soy Administrador</a>
           </div>
         </form>
 
