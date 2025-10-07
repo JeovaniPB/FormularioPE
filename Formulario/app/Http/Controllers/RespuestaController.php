@@ -32,6 +32,8 @@ class RespuestaController extends Controller
             'trabaja' => 'required|boolean',
             'gasto' => 'required|integer',
             'discapacidad' => 'required|boolean',
+        ], [
+            'correo.unique' => 'Este correo ya respondió la encuesta anteriormente.'
         ]);
 
         // Guardar en la DB

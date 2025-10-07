@@ -118,6 +118,16 @@
       </div>
     @endif
 
+    @if ($errors->any())
+        <div class="notification is-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form class="box" method="POST" action="{{ route('formulario.store') }}">
       @csrf
           <!-- Correo -->
@@ -318,6 +328,17 @@
       successNotification.style.opacity = "0";
 
       setTimeout(() => successNotification.remove(), 500);
+    }, 5000); 
+  }
+
+  const Notification = document.querySelector('.notification.is-danger');
+
+  if (Notification) {
+    setTimeout(() => {
+      Notification.style.transition = "opacity 0.5s ease";
+      Notification.style.opacity = "0";
+
+      setTimeout(() => Notification.remove(), 500);
     }, 5000); 
   }
 </script>
