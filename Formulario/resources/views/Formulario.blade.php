@@ -310,6 +310,16 @@
   updateValue("promedio");
   updateValue("traslado", " min");
   updateValue("gasto", " $");
+  const successNotification = document.querySelector('.notification.is-success');
+
+  if (successNotification) {
+    setTimeout(() => {
+      successNotification.style.transition = "opacity 0.5s ease";
+      successNotification.style.opacity = "0";
+
+      setTimeout(() => successNotification.remove(), 500);
+    }, 5000); 
+  }
 </script>
 </body>
 </html>
