@@ -192,13 +192,24 @@
           <div class="notification is-success">{{ session('success') }}</div>
         @endif
 
-        <form class="box" method="POST" action="{{ route('formulario.store') }}">
-          @csrf
+    @if ($errors->any())
+        <div class="notification is-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form class="box" method="POST" action="{{ route('formulario.store') }}">
+      @csrf
+
           <!-- Correo -->
           <div class="field">
             <label class="label">Correo</label>
             <div class="control has-icons-left">
-              <input class="input" type="email" name="correo" placeholder="ejemplo@correo.com" required>
+              <input class="input" name="correo" type="email" placeholder="ejemplo@correo.com" required>
               <span class="icon is-left">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2
                   2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8.236l7.386
@@ -231,6 +242,25 @@
                 <label class="label">Semestre</label>
                 <input class="input is-fullwidth" type="number" min="1" max="10" value="1" id="semestre" name="semestre" required>
                 <div class="value-line"><span id="semestreValue" class="value-badge">1° semestre</span></div>
+                <label class="label">¿Tienes alguna discapacidad?</label>
+                <div class="select is-fullwidth">
+                  <select name="discapacidad">
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="field">
+                <label class="label">¿Trabajas actualmente?</label>
+                <div class="select is-fullwidth">
+                  <select name="trabaja">
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -272,6 +302,7 @@
                 <label class="label">Peso (kg)</label>
                 <input class="input is-fullwidth" type="number" min="40" max="200" value="70" id="peso" name="peso" required>
                 <div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>
+
               </div>
             </div>
           </div>
@@ -288,6 +319,7 @@
                     <option>Femenino</option>
                   </select>
                 </div>
+
               </div>
             </div>
 
@@ -360,6 +392,11 @@
               <button type="submit" class="button btn-gradient">Enviar</button>
             </div>
           </div>
+          
+          <div class="field is-grouped is-justify-content-center">
+             <a href="{{ url('/login') }}">Soy Administrador</a>
+          </div>
+        </form>
 
           <p class="has-text-centered is-size-7 has-text-grey mt-3">
             Tus datos están protegidos y no se compartirán con terceros.
@@ -407,7 +444,29 @@
   updateValue("peso", " kg");
   updateValue("promedio");
   updateValue("traslado", " min");
-  updateValue("gasto", "");
+
+  updateValue("gasto", " $");
+  const successNotification = document.querySelector('.notification.is-success');
+
+  if (successNotification) {
+    setTimeout(() => {
+      successNotification.style.transition = "opacity 0.5s ease";
+      successNotification.style.opacity = "0";
+
+      setTimeout(() => successNotification.remove(), 500);
+    }, 5000); 
+  }
+
+  const Notification = document.querySelector('.notification.is-danger');
+
+  if (Notification) {
+    setTimeout(() => {
+      Notification.style.transition = "opacity 0.5s ease";
+      Notification.style.opacity = "0";
+
+      setTimeout(() => Notification.remove(), 500);
+    }, 5000); 
+  }
 </script>
 </body>
 </html>
