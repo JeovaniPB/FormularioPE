@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
   <link rel="stylesheet" href="{{ asset('../css/uncss.css') }}">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
   <style>
     
 
@@ -188,7 +192,16 @@
 <section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
   <div class="stats-box box">
     <h1 class="title has-text-centered has-text-weight-bold">Estadísticas de Respuestas</h1>
-
+  <div class="level-right">
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="button is-danger" type="submit" title="Cerrar sesión">
+          <span class="icon">
+            <i class="fas fa-sign-out-alt"></i>
+          </span>
+        </button>
+      </form>
+  </div>
  <div class="filters-bar">
    {{-- Selector de carrera --}}
    <div class="field">
