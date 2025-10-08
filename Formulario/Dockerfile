@@ -2,7 +2,7 @@
 FROM node:22
 
 # Definir directorio de trabajo
-WORKDIR /app
+WORKDIR Formulario/app
 
 # Copiar package.json y package-lock.json 
 COPY Formulario/package*.json ./
