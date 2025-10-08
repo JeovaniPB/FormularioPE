@@ -1,10 +1,9 @@
 # Imagen base
 FROM node:22
 
-# Definir directorio de trabajo
-WORKDIR Formulario/app
+# Definir directorio de trabajo dentro del contenedor
+WORKDIR /app
 
-# Copiar package.json y package-lock.json 
 COPY Formulario/package*.json ./
 
 # Instalar dependencias
