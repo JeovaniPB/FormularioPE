@@ -23,3 +23,11 @@ Route::middleware(['auth'])->group(function () { //Ruta admin protegida
     })->name('perfil');
     Route::get('/Estadisticas', [EstadisticaController::class, 'estadisticas'])->name('estadisticas');
 });
+
+Route::get('/', function () {
+    return view('bienvenida');
+});
+
+Route::view('/bienvenida', 'bienvenida')->name('bienvenida');
+// (opcional) que también sea la raíz:
+Route::view('/', 'bienvenida');

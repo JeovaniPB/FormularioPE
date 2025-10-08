@@ -156,11 +156,10 @@
 </head>
 <body>
 <section class="hero-bg">
-
+<!--
   <div class="container">
-    <!-- Pantalla inicial con dos botones -->
    <div id="chooser" class="columns is-centered is-mobile">
-  <div class="column is-centered is-11-mobile is-11-desktop">
+   <div class="column is-centered is-11-mobile is-11-desktop">
     <div class="box has-text-centered p-6" id="chooserBox">
       <figure class="image  is-1by1">
       <img src="{{ asset('images/Logo2.png') }}" alt="Logo">
@@ -181,8 +180,9 @@
     </div>
   </div>
 </div>
+-->
     <!-- Formulario (oculto al inicio) -->
-    <div id="formWrapper" class="columns is-centered is-hidden reveal" aria-hidden="true">
+    <div id="formWrapper" class="columns is-centered" aria-hidden="true">
       <div class="column is-12">
         <div class="title-wrap has-text-centered mb-4">
           <h1 class="title is-3 mb-3">Formulario Escolar</h1>
@@ -234,7 +234,7 @@
               <div class="field">
                 <label class="label">Edad</label>
                 <input class="input is-fullwidth" type="number" min="15" max="60" value="20" id="edad" name="edad" required>
-                <div class="value-line"><span id="edadValue" class="value-badge">20 años</span></div>
+                <!--<div class="value-line"><span id="edadValue" class="value-badge">20 años</span></div>-->
               </div>
             </div>
             <div class="column">
@@ -272,14 +272,14 @@
               <div class="field">
                 <label class="label">Estatura (cm)</label>
                 <input class="input is-fullwidth" type="number" min="120" max="220" value="170" id="estatura" name="estatura" required>
-                <div class="value-line"><span id="estaturaValue" class="value-badge">170 cm</span></div>
+                <!--<div class="value-line"><span id="estaturaValue" class="value-badge">170 cm</span></div>-->
               </div>
             </div>
             <div class="column">
               <div class="field">
                 <label class="label">Peso (kg)</label>
                 <input class="input is-fullwidth" type="number" min="40" max="200" value="70" id="peso" name="peso" required>
-                <div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>
+                <!--<div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>-->
 
               </div>
             </div>
@@ -316,7 +316,7 @@
 
             <div class="column">
               <div class="field">
-                <label class="label">¿Trabajas actualmente?</label>
+                <label class="label has-text-centered is-block  has-text-left-mobile">¿Trabajas actualmente?</label>
                 <div class="select is-fullwidth">
                   <select name="trabaja" required>
                     <option value="" disabled selected>Selecciona</option>
@@ -334,7 +334,7 @@
               <div class="field">
                 <label class="label">Promedio anterior</label>
                 <input class="input" type="number" min="0" max="10" step="0.1" value="8" id="promedio" name="promedio" required>
-                <div class="value-line"><span id="promedioValue" class="value-badge">8.0</span></div>
+                <!--<div class="value-line"><span id="promedioValue" class="value-badge">8.0</span></div>-->
               </div>
             </div>
           </div>
@@ -346,14 +346,14 @@
               <div class="field">
                 <label class="label">Tiempo de traslado (min)</label>
                 <input class="input is-fullwidth" type="number" min="0" max="180" step="5" value="30" id="traslado" name="traslado" required>
-                <div class="value-line"><span id="trasladoValue" class="value-badge">30 min</span></div>
+                <!--<div class="value-line"><span id="trasladoValue" class="value-badge">30 min</span></div>-->
               </div>
             </div>
             <div class="column">
               <div class="field">
                 <label class="label">Gasto mensual para la escuela ($)</label>
                 <input class="input is-fullwidth" type="number" min="0" max="10000" step="100" value="2000" id="gasto" name="gasto" required>
-                <div class="value-line"><span id="gastoValue" class="value-badge">$2,000</span></div>
+                <!--<div class="value-line"><span id="gastoValue" class="value-badge">$2,000</span></div>-->
               </div>
             </div>
           </div>
@@ -363,7 +363,7 @@
 
 
           <div class="control">
-            <a href="{{ url()->previous() }}" class="button btn-outline is-rounded">Atrás</a>
+            <a href="{{ url('/bienvenida') }}" class="button btn-outline is-rounded">Atrás</a>
           </div>
 
             <div class="control">
@@ -371,9 +371,6 @@
             </div>
           </div>
           
-          <div class="field is-grouped is-justify-content-center">
-             <a href="{{ url('/login') }}">Soy Administrador</a>
-          </div>
         </form>
 
           <p class="has-text-centered is-size-7 has-text-grey mt-3">
@@ -386,6 +383,8 @@
 </section>
 
 <script>
+
+  /*
   // Mostrar formulario y ocultar chooser
   const btnEst = document.getElementById('btnEstudiante');
   const chooser = document.getElementById('chooser');
@@ -397,7 +396,7 @@
     requestAnimationFrame(() => formWrapper.classList.add('show')); // activa animación
     formWrapper.setAttribute('aria-hidden', 'false');
     formWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+  });*/
 
   // Actualizar badges de valores
   function updateValue(id, suffix="") {
