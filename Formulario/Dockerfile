@@ -1,25 +1,24 @@
-# Imagen base con PHP
-FROM php:8.2-cli
+# Imagen base: Node + PHP
+FROM node:22
 
-# Instalar Node.js y npm
+# Instalar PHP y extensiones necesarias
 RUN apt-get update && \
-    apt-get install -y curl git unzip && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm@11.6.1
+    apt-get install -y php php-cli php-mbstring php-xml php-bcmath unzip git curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Directorio de trabajo
 WORKDIR /app
 
-# Copiar todos los archivos
+# Copiar todo el proyecto al contenedor
 COPY . .
 
-# Instalar dependencias de Laravel y Node
-RUN composer install
+RUN ls -la /app
+
+# Instalar dependencias de Node
 RUN npm install
 
-# Exponer puertos que Laravel y Vite usan
+# Exponer los puertos que usan Laravel y Vite
 EXPOSE 8000 5173
 
-# Comando para iniciar todo
-CMD ["concurrently", "\"php artisan serve --host=0.0.0.0 --port=8000\"", "\"npm run dev\""]
+# Comando para iniciar la app
+CMD ["npx", "concurrently", "php artisan serve --host=0.0.0.0 --port=8000", "npm run dev"]
