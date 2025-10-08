@@ -6,13 +6,17 @@ RUN apt-get update && \
     apt-get install -y php php-cli php-mbstring php-xml php-bcmath unzip git curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Instalar Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Directorio de trabajo
 WORKDIR /app
 
 # Copiar todo el proyecto al contenedor
 COPY . .
 
-RUN ls -la /app
+# Instalar dependencias de PHP
+RUN composer install --no-interaction --optimize-autoloader
 
 # Instalar dependencias de Node
 RUN npm install
