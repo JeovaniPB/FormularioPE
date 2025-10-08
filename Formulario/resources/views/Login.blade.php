@@ -51,7 +51,7 @@
                                 <button id="botoncito" class="button is-fullwidth">Iniciar Sesión</button>
                             </div>
                         </div>
-                        <div class="field is-grouped is-justify-content-center">
+                        <div class="field is-grouped is-justify-content-center fondete">
                             <a href="{{ url('/Formulario') }}">Soy Estudiante</a>
                         </div>
                     </form>
