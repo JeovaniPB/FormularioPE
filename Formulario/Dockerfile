@@ -13,7 +13,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Directorio de trabajo
 WORKDIR /app
 
-# Copiar todo el proyecto al contenedor
+# Copiar todo el proyecto
 COPY . .
 
 # Instalar dependencias de PHP
@@ -22,8 +22,9 @@ RUN composer install --no-interaction --optimize-autoloader
 # Instalar dependencias de Node
 RUN npm install
 
-# Exponer los puertos que usan Laravel y Vite
+# Exponer puertos
 EXPOSE 8000 5173
 
 # Comando para iniciar la app
-CMD ["npx", "concurrently", "php artisan serve --host=0.0.0.0 --port=8000", "npm run dev"]
+CMD ["bash", "-c", "php artisan serve --host=0.0.0.0 --port=8000 & npm run dev"]
+
