@@ -1,16 +1,22 @@
 # Imagen base
 FROM node:22
 
-# Definir directorio de trabajo dentro del contenedor
+# Directorio de trabajo
 WORKDIR /app
 
-COPY Formulario/package*.json ./
+# Copiar todo
+COPY . .
 
-# Instalar dependencias
+# Ver qué hay en el contenedor
+RUN ls -la /app
+RUN ls -la /app/Formulario
+
+# Instalar dependencias desde la carpeta correcta
+WORKDIR /app/Formulario
 RUN npm install
 
-# Copiar el resto del proyecto
-COPY . .
+# Volver al directorio raíz del contenedor
+WORKDIR /app
 
 # Comando para iniciar la app
 CMD ["npm", "run", "dev-all"]
