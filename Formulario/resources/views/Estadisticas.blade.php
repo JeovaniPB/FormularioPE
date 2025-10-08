@@ -37,6 +37,11 @@
       padding: 4px 8px;
       cursor: pointer;
       font-size: 0.8em;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .stats-wrapper { min-height: 100vh; position: relative; }
@@ -101,7 +106,7 @@
     padding: 0.9rem 1.4rem;
     box-shadow: 0 8px 18px rgba(85, 99, 222, 0.25);
     transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
   }
   .btn-gradient:hover { filter: brightness(1.03); box-shadow: 0 10px 22px rgba(85,99,222,.32); }
   .btn-gradient:active { transform: translateY(1px); }
@@ -195,7 +200,7 @@
   <div class="level-right">
       <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button class="button is-danger" type="submit" title="Cerrar sesión">
+        <button class="button is-danger  mb-3.5" style="margin-top: -3rem;" type="submit" title="Cerrar sesión">
           <span class="icon">
             <i class="fas fa-sign-out-alt"></i>
           </span>
@@ -380,7 +385,7 @@
         const div = document.createElement("div");
         div.className = "column is-4 chart-card";
         div.innerHTML = `
-          <button class="switch-btn" onclick="toggleChartType('${campo}Chart')">↻</button>
+          <button class="switch-btn" onclick="toggleChartType('${campo}Chart')"><i class="fa-solid fa-repeat fa-2x"></i></button>
           <canvas id="${campo}Chart"></canvas>
         `;
         wrapper.appendChild(div);
