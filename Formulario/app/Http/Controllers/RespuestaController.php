@@ -10,7 +10,7 @@ class RespuestaController extends Controller
     // Mostrar formulario
     public function create()
     {
-        return view('formulario'); 
+        return view('Formulario'); 
     }
 
     // Guardar los datos del formulario
