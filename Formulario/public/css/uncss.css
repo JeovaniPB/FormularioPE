@@ -5,10 +5,7 @@ html {
 body {
     height: 100vh;
     margin: 0;
-    background-image: url('../img/otroaver.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-color: #eff5ff;
 }
 
 .full-height {
@@ -83,3 +80,39 @@ body {
     padding-bottom: 10px;
 }
 
+.label {
+    font-size: 1.02rem;
+    ;
+}
+
+.fondete {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: rgb(78, 78, 78) !important;
+    }
+
+    .title {
+        color: white;
+    }
+
+    .box {
+        background-color: #898888;
+    }
+
+    a {
+        color: black;
+    }
+
+    #botoncito {
+        background-color: rgb(16, 62, 83);
+    }
+
+    #botoncito::after {
+        background-color: #036390;
+    }
+
+}
