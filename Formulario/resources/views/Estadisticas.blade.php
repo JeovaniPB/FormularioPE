@@ -15,9 +15,9 @@
   <style>
     
 
-    html, body {
-  min-height: 100%;
-  background-color: #eaf2ff;   /* elige tu azul (#eaf2ff es suave) */
+    html, body {  
+        background-color: rgb(78, 78, 78) !important;
+    
 }
 
 
@@ -191,7 +191,7 @@
  
 <section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
   <div class="stats-box box">
-    <h1 class="title has-text-centered has-text-weight-bold">Estadísticas de Respuestas</h1>
+    <h1 class="title has-text-centered has-text-weight-bold has-text-dark">Estadísticas de Respuestas</h1>
   <div class="level-right">
       <form method="POST" action="{{ route('logout') }}">
         @csrf
