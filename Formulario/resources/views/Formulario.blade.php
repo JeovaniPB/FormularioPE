@@ -1,315 +1,636 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Formulario Escolar</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formulario Escolar</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-0: #ffffff;
+            --bg-1: #f7f8fc;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --primary: #4f46e5;
+            --primary-2: #7c3aed;
+            --ring: rgba(79, 70, 229, .18);
+            --card-border: rgba(2, 6, 23, .08);
+            --badge-bg: #eef2ff;
+            --badge-ink: #4338ca;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-0: #0b1220;
+                --bg-1: #0f172a;
+                --ink: #e5e7eb;
+                --muted: #94a3b8;
+                --primary: #8b5cf6;
+                --primary-2: #22d3ee;
+                --ring: rgba(139, 92, 246, .25);
+                --card-border: rgba(148, 163, 184, .18);
+                --badge-bg: #1e293b;
+                --badge-ink: #c7d2fe;
+            }
+        }
+
+        .hero-bg {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(1200px 600px at 10% 10%, var(--bg-1) 0%, var(--bg-0) 60%);
+            position: relative;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .hero-bg::before,
+        .hero-bg::after {
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            filter: blur(70px);
+            opacity: .35;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-bg::before {
+            top: 8%;
+            left: 14%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        }
+
+        .hero-bg::after {
+            bottom: -6%;
+            right: -6%;
+            background: linear-gradient(135deg, #06b6d4, #22d3ee);
+            z-index: -1;
+        }
+
+        .box,
+        .glass-card {
+            background: var(--bg-0);
+            backdrop-filter: saturate(1.05) blur(2px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(2, 6, 23, .06), 0 4px 10px rgba(2, 6, 23, .04);
+            z-index: 2;
+
+        }
+
+        .title-wrap .title {
+            letter-spacing: .2px;
+            color: var(--ink);
+        }
+
+        .title-wrap .subtitle {
+            color: var(--muted);
+        }
+
+        .input,
+        .select select {
+            background: #fff;
+            color: var(--ink);
+            border-radius: 12px;
+            border: 1px solid #e6e9f0;
+            transition: box-shadow .2s, border-color .2s, transform .05s;
+        }
+
+        .input:focus,
+        .select select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 .22rem var(--ring) !important;
+        }
+
+        .input::placeholder {
+            color: #94a3b8;
+            opacity: 1;
+        }
+
+        .has-icons-left .icon {
+            color: #94a3b8;
+        }
+
+        .value-badge {
+            display: inline-block;
+            padding: .35rem .6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: .9rem;
+            background: var(--badge-bg);
+            color: var(--badge-ink);
+        }
+
+        .value-line {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: .35rem;
+        }
+
+        .btn-gradient {
+            background-image: linear-gradient(90deg, var(--primary), var(--primary-2));
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: .9rem 1.4rem;
+            box-shadow: 0 10px 22px rgba(79, 70, 229, .28);
+            transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
+        }
+
+        .btn-gradient:hover {
+            filter: brightness(1.04);
+            box-shadow: 0 12px 26px rgba(79, 70, 229, .34);
+        }
+
+        .btn-gradient:active {
+            transform: translateY(1px);
+        }
+
+        .soft-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(2, 6, 23, .08), transparent);
+            margin: 1rem 0;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        a:hover {
+            color: var(--primary-2);
+        }
+
+        @media (prefers-color-scheme: dark) {
+
+            .input,
+            .select select {
+                background: #0f172a;
+                border-color: rgba(148, 163, 184, .25);
+            }
+
+            .input::placeholder {
+                color: white;
+            }
+
+            .label {
+                color: var(--ink);
+            }
+        }
+
+
+
+        #chooserBox {
+
+            margin: 0 auto;
+            border-radius: 20px;
+            background: var(--bg-0);
+            border: 1px solid var(--card-border);
+            box-shadow:
+                0 14px 28px rgba(15, 23, 42, 0.08),
+                0 5px 12px rgba(15, 23, 42, 0.05);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+
+
+
+        #chooserBox .title {
+            color: var(--ink);
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        #chooserBox .subtitle {
+            color: var(--muted);
+        }
+
+
+        #chooserBox .button {
+            width: 200px;
+            font-weight: 600;
+            border-radius: 999px;
+            transition: all 0.25s ease;
+        }
+
+
+        .btn-gradient {
+            background-image: linear-gradient(90deg, var(--primary), var(--primary-2));
+            color: #fff !important;
+            border: none;
+            box-shadow: 0 10px 22px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-gradient:hover {
+            filter: brightness(1.08);
+            box-shadow: 0 14px 28px rgba(79, 70, 229, 0.35);
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary-2) !important;
+        }
+
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        #successModal .modal-card {
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        @media (prefers-color-scheme: dark) {
+            #chooserBox {
+                background: #0f172a;
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                box-shadow: 0 12px 26px rgba(0, 0, 0, 0.25);
+            }
+
+            #chooserBox:hover {
+                box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+            }
+
+            .btn-outline {
+                color: var(--primary-2);
+                border-color: var(--primary-2);
+            }
+
+            .btn-outline:hover {
+                background: var(--primary-2);
+                color: #fff;
+            }
+
+            .modal-card-body {
+                background-color: #2b3043;
+            }
+
+            .modal-card-body .subtitle {
+                color: white;
+            }
+
+            .has-background-link-light {
+                background-color: #474b5b !important;
+            }
+
+            .has-background-link-light .has-text-link-dark {
+                color: whitesmoke !important;
+            }
+
+            .modal-card-foot,
+            .modal-card-head {
+                background-color: #474b5b;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-
-<style>
-  
-  .hero-bg {
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    background: radial-gradient(1200px 600px at 10% 10%, #eef4ff 0%, #f7f9ff 35%, #f9fbff 60%, #ffffff 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-bg::before, .hero-bg::after {
-    content: "";
-    position: absolute;
-    width: 420px; height: 420px;
-    filter: blur(60px);
-    opacity: 0.3;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-  .hero-bg::before {
-    top: 10%; left: 15%;
-    background: linear-gradient(135deg, #7c8cff, #a1c4fd);
-  }
-  .hero-bg::after {
-    bottom: -5%; right: -5%;
-    background: linear-gradient(135deg, #ffb6b9, #ffd6a5);
-  }
-
-  
-  .glass-card {
-    backdrop-filter: saturate(1.2) blur(2px);
-    border: 1px solid rgba(30, 41, 59, 0.08);
-    border-radius: 18px;
-    box-shadow:
-      0 10px 25px rgba(2, 6, 23, 0.06),
-      0 4px 10px rgba(2, 6, 23, 0.04);
-  }
-
-  
-  .title-wrap .title { letter-spacing: 0.2px; }
-  .title-wrap .subtitle { color: #64748b; }
-
-  
-  .input, .select select {
-    border-radius: 12px;
-    border-color: #e6e9f0;
-    transition: box-shadow .2s, border-color .2s, transform .05s;
-  }
-  .input:focus, .select select:focus {
-    border-color: #8ba7ff !important;
-    box-shadow: 0 0 0 0.2rem rgba(107, 139, 255, 0.15) !important;
-  }
-
-  
-  input[type="range"] {
-    height: 2px;
-    border-radius: 999px;
-  }
-
- 
-  .value-badge {
-    display: inline-block;
-    padding: 0.35rem 0.6rem;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    background: #f1f5ff;
-    color: #3949ab;
-  }
-  .value-line { display: flex; justify-content: flex-end; margin-top: .35rem; }
-
- 
-  .btn-gradient {
-    background-image: linear-gradient(90deg, #5563de, #7b8dff);
-    color: #fff !important;
-    border: none;
-    border-radius: 999px;
-    padding: 0.9rem 1.4rem;
-    box-shadow: 0 8px 18px rgba(85, 99, 222, 0.25);
-    transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
-  }
-  .btn-gradient:hover { filter: brightness(1.03); box-shadow: 0 10px 22px rgba(85,99,222,.32); }
-  .btn-gradient:active { transform: translateY(1px); }
-
-  
-  .soft-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(2,6,23,.07), transparent);
-    margin: 1rem 0 1rem;
-  }
-</style>
-
-<section class="hero-bg">
+    <section class="hero-bg">
+        <!--
   <div class="container">
-
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="title-wrap has-text-centered mb-4">
-          <h1 class="title is-3 mb-3">Formulario Escolar</h1>
-          <p class="subtitle is-6 mt-3">Completa tus datos. Tardas menos de 2 minutos.</p>
-
-    <!-- Mensaje de éxito -->
-    @if(session('success'))
-      <div class="notification is-success">
-        {{ session('success') }}
+   <div id="chooser" class="columns is-centered is-mobile">
+   <div class="column is-centered is-11-mobile is-11-desktop">
+    <div class="box has-text-centered p-6" id="chooserBox">
+      <figure class="image  is-1by1">
+      <img src="{{ asset('images/Logo2.png') }}" alt="Logo">
+      </figure>
+      <div class="title-wrap mb-5">
+        <h1 class="title is-2 mb-4">Bienvenido</h1>
+        <p class="subtitle is-6">Selecciona una opción para continuar</p>
       </div>
-    @endif
 
-    <form class="box" method="POST" action="{{ route('formulario.store') }}">
-      @csrf
-          <!-- Correo -->
-          <div class="field">
-            <label class="label">Correo</label>
-            <div class="control has-icons-left">
-              <input class="input" type="email" placeholder="ejemplo@correo.com" required>
-              <span class="icon is-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8"><path d="M20 4H4a2 2 0 0 0-2 2v12a2
-                 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8.236l7.386
-                 5.83a1 1 0 0 0 1.228 0L20 8.236V18H4z"/></svg>
-              </span>
-            </div>
-          </div>
-
-          <!-- Nombre completo -->
-          <div class="field">
-            <label class="label">Nombre completo</label>
-            <div class="control">
-              <input class="input" type="text" placeholder="Tu nombre completo" required>
-            </div>
-          </div>
-
-          <div class="soft-divider"></div>
-
-          <!-- Fila de selects -->
-          <div class="columns is-variable is-4 is-align-items-end">
-            <div class="column">
-              <div class="field">
-                <label class="label">Sexo</label>
-                <div class="select is-fullwidth">
-                  <select>
-                    <option>Masculino</option>
-                    <option>Femenino</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="column">
-              <div class="field">
-                <label class="label">¿Tienes alguna discapacidad?</label>
-                <div class="select is-fullwidth">
-                  <select>
-                    <option>No</option>
-                    <option>Sí</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="column">
-              <div class="field">
-                <label class="label">¿Trabajas actualmente?</label>
-                <div class="select is-fullwidth">
-                  <select>
-                    <option>No</option>
-                    <option>Sí</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Carrera -->
-          <div class="field">
-            <label class="label">Carrera</label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select>
-                  <option>Ingeniería en Computación</option>
-                  <option>Ingeniería Química</option>
-                  <option>Ingeniería en Diseño</option>
-                  <option>Ingeniería en Petróleos</option>
-                  <option>Ingeniería en Energías Renovables</option>
-                  <option>Ingeniería Industrial</option>
-                  <option>Licenciatura en Matemáticas Aplicadas</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="soft-divider"></div>
-
-          <!-- Sliders 1 -->
-          <div class="columns is-variable is-4">
-            <div class="column">
-              <div class="field">
-                <label class="label">Edad</label>
-                <input class="input is-fullwidth" type="number" min="15" max="60" value="20" id="edad">
-                <div class="value-line"><span id="edadValue" class="value-badge">20 años</span></div>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label">Semestre</label>
-                <input class="input is-fullwidth" type="number" min="1" max="10" value="1" id="semestre">
-                <div class="value-line"><span id="semestreValue" class="value-badge">1° semestre</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sliders 2 -->
-          <div class="columns is-variable is-4">
-            <div class="column">
-              <div class="field">
-                <label class="label">Estatura (cm)</label>
-                <input class="input is-fullwidth" type="number" min="120" max="220" value="170" id="estatura">
-                <div class="value-line"><span id="estaturaValue" class="value-badge">170 cm</span></div>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label">Peso (kg)</label>
-                <input class="input is-fullwidth " type="number" min="40" max="200" value="70" id="peso">
-                <div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sliders 3 -->
-          <div class="columns is-variable is-4">
-            <div class="column">
-              <div class="field">
-                <label class="label">Altura (m)</label>
-                <input class="input is-fullwidth " type="number" min="1.20" max="2.20" step="0.01" value="1.70" id="altura">
-                <div class="value-line"><span id="alturaValue" class="value-badge">1.70 m</span></div>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label">Promedio anterior</label>
-                <input class="input is-fullwidth " type="number" min="0" max="10" step="0.1" value="8" id="promedio">
-                <div class="value-line"><span id="promedioValue" class="value-badge">8.0</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sliders 4 -->
-          <div class="columns is-variable is-4">
-            <div class="column">
-              <div class="field">
-                <label class="label">Tiempo de traslado (min)</label>
-                <input class="input is-fullwidth " type="number" min="0" max="180" step="5" value="30" id="traslado">
-                <div class="value-line"><span id="trasladoValue" class="value-badge">30 min</span></div>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label">Gasto mensual para la escuela ($)</label>
-                <input class="input is-fullwidth " type="number" min="0" max="10000" step="100" value="2000" id="gasto">
-                <div class="value-line"><span id="gastoValue" class="value-badge">$2,000</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Botón -->
-          <div class="field is-grouped is-justify-content-center mt-4">
-            <div class="control">
-              <button type="submit" class="button btn-gradient">Enviar</button>
-            </div>
-          </div>
-          
-          <div class="field is-grouped is-justify-content-center">
-             <a href="{{ url('/Login') }}">Soy Administrador</a>
-          </div>
-        </form>
-
-        <p class="has-text-centered is-size-7 has-text-grey mt-3">
-          Tus datos están protegidos y no se compartirán con terceros.
-        </p>
+      <div class="buttons is-centered mt-5">
+        <button id="btnEstudiante" class="button btn-gradient is-medium">
+          Soy Estudiante
+        </button>
+        <a href="{{ url('/login') }}" class="button btn-outline is-medium">
+          Administrador
+        </a>
       </div>
     </div>
   </div>
-</section>
+</div>
+-->
+        <!-- Formulario (oculto al inicio) -->
+        <div id="formWrapper" class="columns is-centered" aria-hidden="true">
+            <div class="column is-12">
+                <div class="title-wrap has-text-centered mb-4">
+                    <h1 class="title is-3 mb-3">Formulario Escolar</h1>
+                    <p class="subtitle is-6 mt-3">Completa tus datos. <br>Tardas menos de 2 minutos.</p>
+                </div>
 
-<script>
-  function updateValue(id, suffix="") {
-    const input = document.getElementById(id);
-    const output = document.getElementById(id + "Value");
-    input.addEventListener("input", () => {
-      output.textContent = input.value + suffix;
-    });
-  }
+                @if (session('success'))
+                    <div class="modal is-active" id="successModal">
+                        <div class="modal-background"></div>
+                        <div class="modal-card">
+                            <header class="modal-card-head has-background-link-light">
+                                <p class="modal-card-title has-text-link-dark">Encuesta finalizada</p>
+                            </header>
+                            <section class="modal-card-body has-text-centered">
+                                <h2 class="title is-4 has-text-link">Gracias por responder la encuesta!!</h2>
+                                <p class="subtitle is-6">Tus respuestas se han guardado correctamente.</p>
+                                <img src="../img/encuesta.png" alt="encuesta" class="is-rounded" width="120">
+                            </section>
+                            <footer class="modal-card-foot is-justify-content-center">
+                                <a href="{{ url('/') }}" class="button is-link is-rounded">
+                                    Volver al inicio
+                                </a>
+                            </footer>
+                        </div>
+                    </div>
+                    <div class="notification is-success">{{ session('success') }}</div>
+                @endif
 
-  updateValue("edad", " años");
-  updateValue("semestre", "° semestre");
-  updateValue("estatura", " cm");
-  updateValue("peso", " kg");
-  updateValue("promedio");
-  updateValue("traslado", " min");
-  updateValue("gasto", " $");
-</script>
+
+                @if ($errors->any())
+                    <div class="notification is-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form class="box" method="POST" action="{{ route('formulario.store') }}">
+                    @csrf
+                    <!-- Correo -->
+                    <div class="field">
+                        <label class="label">Correo</label>
+                        <div class="control has-icons-left">
+                            <input class="input" name="correo" type="email" placeholder="ejemplo@correo.com"
+                                required>
+                            <span class="icon is-left">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8"
+                                    aria-hidden="true">
+                                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2
+                  2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8.236l7.386
+                  5.83a1 1 0 0 0 1.228 0L20 8.236V18H4z" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Nombre completo -->
+                    <div class="field">
+                        <label class="label">Nombre completo</label>
+                        <div class="control">
+                            <input class="input" type="text" name="nombre" placeholder="Tu nombre completo"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="soft-divider"></div>
+
+                    <!-- Números 1 -->
+                    <div class="columns is-variable is-4">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Edad</label>
+                                <input class="input is-fullwidth" type="number" min="15" max="60"
+                                    value="20" id="edad" name="edad" required>
+                                <!--<div class="value-line"><span id="edadValue" class="value-badge">20 años</span></div>-->
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Semestre</label>
+                                <input class="input is-fullwidth" type="number" min="1" max="10"
+                                    value="1" id="semestre" name="semestre" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carrera -->
+                    <div class="field">
+                        <label class="label">Carrera</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="carrera" required>
+                                    <option value="" disabled selected>Selecciona tu carrera</option>
+                                    <option>Ingeniería en Computación</option>
+                                    <option>Ingeniería Química</option>
+                                    <option>Ingeniería en Diseño</option>
+                                    <option>Ingeniería en Petróleos</option>
+                                    <option>Ingeniería en Energías Renovables</option>
+                                    <option>Ingeniería Industrial</option>
+                                    <option>Licenciatura en Matemáticas Aplicadas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="soft-divider"></div>
+
+                    <!-- Números 2 -->
+                    <div class="columns is-variable is-4">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Estatura (cm)</label>
+                                <input class="input is-fullwidth" type="number" min="120" max="220"
+                                    value="170" id="estatura" name="estatura" required>
+                                <!--<div class="value-line"><span id="estaturaValue" class="value-badge">170 cm</span></div>-->
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Peso (kg)</label>
+                                <input class="input is-fullwidth" type="number" min="40" max="200"
+                                    value="70" id="peso" name="peso" required>
+                                <!--<div class="value-line"><span id="pesoValue" class="value-badge">70 kg</span></div>-->
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selects -->
+                    <div class="columns is-variable is-4 is-align-items-end">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label  has-text-centered is-block  has-text-left-mobile">Sexo</label>
+                                <div class="select is-fullwidth">
+                                    <select name="sexo" required>
+                                        <option value="" disabled selected>Selecciona</option>
+                                        <option>Masculino</option>
+                                        <option>Femenino</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label has-text-centered is-block  has-text-left-mobile">¿Tienes alguna
+                                    discapacidad?</label>
+                                <div class="select is-fullwidth">
+                                    <select name="discapacidad" required>
+                                        <option value="" disabled selected>Selecciona</option>
+                                        <option value="0">No</option>
+                                        <option value="1">Sí</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label has-text-centered is-block  has-text-left-mobile">¿Trabajas
+                                    actualmente?</label>
+                                <div class="select is-fullwidth">
+                                    <select name="trabaja" required>
+                                        <option value="" disabled selected>Selecciona</option>
+                                        <option value="0">No</option>
+                                        <option value="1">Sí</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Números 3 -->
+                    <div class="columns is-variable is-4 is-centered">
+                        <div class="column is-half is-narrow">
+                            <div class="field">
+                                <label class="label">Promedio anterior</label>
+                                <input class="input" type="number" min="0" max="10" step="0.1"
+                                    value="8" id="promedio" name="promedio" required>
+                                <!--<div class="value-line"><span id="promedioValue" class="value-badge">8.0</span></div>-->
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Números 4 -->
+                    <div class="columns is-variable is-4">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Tiempo de traslado (min)</label>
+                                <input class="input is-fullwidth" type="number" min="0" max="180"
+                                    step="5" value="30" id="traslado" name="traslado" required>
+                                <!--<div class="value-line"><span id="trasladoValue" class="value-badge">30 min</span></div>-->
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Gasto mensual para la escuela ($)</label>
+                                <input class="input is-fullwidth" type="number" min="0" max="10000"
+                                    step="100" value="2000" id="gasto" name="gasto" required>
+                                <!--<div class="value-line"><span id="gastoValue" class="value-badge">$2,000</span></div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón -->
+                    <div class="field is-grouped is-justify-content-center  is-justify-content-space-between mt-4">
+
+
+                        <div class="control">
+                            <a href="{{ url('/bienvenida') }}" class="button btn-outline is-rounded">Atrás</a>
+                        </div>
+
+                        <div class="control">
+                            <button type="submit" class="button btn-gradient">Enviar</button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <p class="has-text-centered is-size-7 has-text-grey mt-3">
+                    Tus datos están protegidos y no se compartirán con terceros.
+                </p>
+                </form>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <script>
+        /*
+                      // Mostrar formulario y ocultar chooser
+                      const btnEst = document.getElementById('btnEstudiante');
+                      const chooser = document.getElementById('chooser');
+                      const formWrapper = document.getElementById('formWrapper');
+
+                      btnEst.addEventListener('click', () => {
+                        chooser.classList.add('is-hidden');
+                        formWrapper.classList.remove('is-hidden');
+                        requestAnimationFrame(() => formWrapper.classList.add('show')); // activa animación
+                        formWrapper.setAttribute('aria-hidden', 'false');
+                        formWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      });*/
+
+        // Actualizar badges de valores
+        function updateValue(id, suffix = "") {
+            const input = document.getElementById(id);
+            const output = document.getElementById(id + "Value");
+            if (!input || !output) return;
+            const formatMoney = (n) =>
+                n.toLocaleString('es-MX', {
+                    maximumFractionDigits: 0
+                });
+
+            const render = () => {
+                let v = input.value;
+                if (id === 'gasto') v = `$${formatMoney(Number(v||0))}`;
+                output.textContent = v + suffix;
+            };
+            input.addEventListener("input", render);
+            render();
+        }
+
+        updateValue("edad", " años");
+        updateValue("semestre", "° semestre");
+        updateValue("estatura", " cm");
+        updateValue("peso", " kg");
+        updateValue("promedio");
+        updateValue("traslado", " min");
+        updateValue("gasto", " $");
+        const successNotification = document.querySelector('.notification.is-success');
+
+        if (successNotification) {
+            setTimeout(() => {
+                successNotification.style.transition = "opacity 0.5s ease";
+                successNotification.style.opacity = "0";
+
+                setTimeout(() => successNotification.remove(), 500);
+            }, 5000);
+        }
+
+        const Notification = document.querySelector('.notification.is-danger');
+
+        if (Notification) {
+            setTimeout(() => {
+                Notification.style.transition = "opacity 0.5s ease";
+                Notification.style.opacity = "0";
+                setTimeout(() => Notification.remove(), 500);
+            }, 5000);
+        }
+    </script>
 </body>
+
 </html>

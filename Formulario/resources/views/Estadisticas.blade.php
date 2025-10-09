@@ -8,12 +8,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
   <link rel="stylesheet" href="{{ asset('../css/uncss.css') }}">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
   <style>
     
 
-    html, body {
-  min-height: 100%;
-  background-color: #eaf2ff;   /* elige tu azul (#eaf2ff es suave) */
+    html, body {  
+        background-color: rgb(78, 78, 78) !important;
+    
 }
 
 
@@ -33,6 +37,11 @@
       padding: 4px 8px;
       cursor: pointer;
       font-size: 0.8em;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .stats-wrapper { min-height: 100vh; position: relative; }
@@ -97,7 +106,7 @@
     padding: 0.9rem 1.4rem;
     box-shadow: 0 8px 18px rgba(85, 99, 222, 0.25);
     transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
   }
   .btn-gradient:hover { filter: brightness(1.03); box-shadow: 0 10px 22px rgba(85,99,222,.32); }
   .btn-gradient:active { transform: translateY(1px); }
@@ -187,8 +196,17 @@
  
 <section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
   <div class="stats-box box">
-    <h1 class="title has-text-centered has-text-weight-bold">Estadísticas de Respuestas</h1>
-
+    <h1 class="title has-text-centered has-text-weight-bold has-text-dark">Estadísticas de Respuestas</h1>
+  <div class="level-right">
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="button is-danger  mb-3.5" style="margin-top: -3rem;" type="submit" title="Cerrar sesión">
+          <span class="icon">
+            <i class="fas fa-sign-out-alt"></i>
+          </span>
+        </button>
+      </form>
+  </div>
  <div class="filters-bar">
    {{-- Selector de carrera --}}
    <div class="field">
@@ -367,7 +385,7 @@
         const div = document.createElement("div");
         div.className = "column is-4 chart-card";
         div.innerHTML = `
-          <button class="switch-btn" onclick="toggleChartType('${campo}Chart')">↻</button>
+          <button class="switch-btn" onclick="toggleChartType('${campo}Chart')"><i class="fa-solid fa-repeat fa-2x"></i></button>
           <canvas id="${campo}Chart"></canvas>
         `;
         wrapper.appendChild(div);
@@ -522,6 +540,7 @@
 
       tr.style.display = (okCarrera && okSemestre && okSexo && okDiscapacidad && okTrabaja) ? '' : 'none';
     });
+    actualizarGraficas(); 
   }
 
   // Alternar vista tabla / gráficas
