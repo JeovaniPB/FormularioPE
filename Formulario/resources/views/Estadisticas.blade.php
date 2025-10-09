@@ -59,6 +59,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 1.5rem 1.5rem 2rem;
+      width: 100%;
     }
 
     .filters-bar{
@@ -194,7 +195,7 @@
 </head>
 <body>
  
-<section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
+<section class="section stats-wrapper is-flex is-flex-direction-column is-align-items-center"  style="gap: 1.5rem;">
   <div class="stats-box box">
     <h1 class="title has-text-centered has-text-weight-bold has-text-dark">Estadísticas de Respuestas</h1>
   <div class="level-right">
@@ -352,10 +353,50 @@
         <!-- Aquí se insertan dinámicamente las gráficas -->
       </div>
     </div>
-
-
   </div>
+
+  <div class="stats-box box">
+   <h1 class="title has-text-centered has-text-weight-bold has-text-dark">Promedio, Varianza y Desviación estandar</h1>
+    
+  <div class="field">
+     <label class="label">Obtener el promedio, varianza y desviación estandar por: </label>
+     <div class="control">
+     <div class="select">
+       <select id="selectOpcion" onchange="filtrarPVD()">
+             <option value="edad">Edad</option>
+             <option value="semestre">Semestre</option>
+             <option value="estatura">Estatura</option>
+             <option value="peso">Peso</option>
+             <option value="promedio">Promedio</option>
+             <option value="traslado">Traslado</option>
+             <option value="gasto">Gasto</option>
+           </select>
+     </div> 
+      </div>
+   </div>
+
+
+   <div id="tablaDatos" class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable is-bordered" id="tablaRespuestas">
+        <thead>
+          <tr>
+            <th>Promedio</th>
+            <th>Varianza</th>
+            <th>Desviación estandar</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+  </div>
+ 
 </section>
+
+<!--section class="section stats-wrapper is-flex is-justify-content-center is-align-items-start">
+  
+</section-->
+
 
 <script>
   const baseColors = ['#36A2EB','#FF6384','#FFCE56','#4BC0C0','#9966FF'];
@@ -473,6 +514,7 @@
 
     // <-- AQUI está la clave: volver a calcular las gráficas con las filas visibles
     actualizarGraficas();
+    filtrarPVD(); // <-- añade esta línea
   }
 
 
@@ -660,8 +702,109 @@ document.querySelectorAll("#tablaRespuestas th.sortable").forEach((th) => {
 });
 
 
+const COL_INDEX = {
+  edad: 2,
+  semestre: 4,
+  estatura: 5,
+  peso: 6,
+  promedio: 7,
+  traslado: 8,
+  gasto: 10,
+};
+
+// Parsear número desde una celda (soporta miles y comas decimales)
+function parseNumberFromText(raw) {
+  if (raw == null) return NaN;
+  let txt = raw.toString().trim();
+  if (!txt) return NaN;
+
+  // tomar primera secuencia numérica
+  const match = txt.match(/-?\d+[0-9.,]*/);
+  if (!match) return NaN;
+
+  let n = match[0]
+    .replace(/\.(?=\d{3}(\D|$))/g, "") // quita puntos de miles
+    .replace(/,/g, ".")                // coma -> punto decimal
+    .replace(/[^\d.-]/g, "");          // limpia
+
+  const val = parseFloat(n);
+  return isNaN(val) ? NaN : val;
+}
+
+// Obtiene los valores numéricos del campo elegido, SOLO de filas visibles
+function getVisibleNumericValues(campo) {
+  const col = COL_INDEX[campo];
+  if (typeof col === "undefined") return [];
+
+  const values = [];
+  const rows = document.querySelectorAll("#tablaRespuestas tbody tr");
+  rows.forEach(tr => {
+    if (tr.style.display === "none") return; // respeta filtros
+    const cellText = tr.children[col]?.innerText ?? "";
+    const num = parseNumberFromText(cellText);
+    if (!isNaN(num)) values.push(num);
+  });
+  return values;
+}
+
+// Calcula promedio, varianza (poblacional) y desviación estándar
+// Calcula promedio, varianza (muestral) y desviación estándar (muestral)
+function computeStats(arr) {
+  const n = arr.length;
+  if (n === 0) return { mean: null, variance: null, stddev: null };
+
+  const mean = arr.reduce((a, b) => a + b, 0) / n;
+
+  // Para varianza/desv. muestral se necesitan al menos 2 datos
+  if (n < 2) return { mean, variance: null, stddev: null };
+
+  const sumSquares = arr.reduce((acc, x) => acc + Math.pow(x - mean, 2), 0);
+  const variance = sumSquares / (n - 1);     // <<< muestral
+  const stddev = Math.sqrt(variance);
+
+  return { mean, variance, stddev };
+}
+
+// Pinta la tabla #tablaDatos con los resultados
+function renderPVD(stats) {
+  const tbody = document.querySelector("#tablaDatos tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  if (stats.mean == null) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="3" style="text-align:center;">Sin datos para calcular</td>
+      </tr>`;
+    return;
+  }
+
+  const fmt = (x) => x.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${fmt(stats.mean)}</td>
+    <td>${fmt(stats.variance)}</td>
+    <td>${fmt(stats.stddev)}</td>
+  `;
+  tbody.appendChild(tr);
+}
+
+// Lógica del selector "Obtener el promedio..." 
+function filtrarPVD() {
+  const campo = document.getElementById("selectOpcion")?.value || "edad";
+  const vals = getVisibleNumericValues(campo);
+  const stats = computeStats(vals);
+  renderPVD(stats);
+}
+
+
+
+
   inicializarGraficasHTML();
   actualizarGraficas();
+  filtrarPVD(); 
+
+
 
 </script>
 </body>
